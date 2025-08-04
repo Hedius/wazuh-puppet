@@ -31,7 +31,8 @@ class wazuh::indexer (
   # assign version according to the package manager
   case $facts['os']['family'] {
     'Debian': {
-      $indexer_version_install = "${indexer_version}-*"
+      # todo check this
+      $indexer_version_install = "${indexer_version}-1"
     }
     'Linux', 'RedHat', default: {
       $indexer_version_install = $indexer_version
@@ -43,6 +44,7 @@ class wazuh::indexer (
     ensure => $indexer_version_install,
     name   => $indexer_package,
   }
+  # todo pin the package
 
   exec { "ensure full path of ${indexer_path_certs}":
     path    => '/usr/bin:/bin',
@@ -71,7 +73,8 @@ class wazuh::indexer (
       mode    => '0400',
       replace => true,
       recurse => remote,
-      source  => "puppet:///modules/archive/${certfile}",
+      # todo - same crt workaround
+      source  => "/etc/wazuh-certs/${certfile}",
     }
   }
 

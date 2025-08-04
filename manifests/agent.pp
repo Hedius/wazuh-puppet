@@ -271,6 +271,7 @@ class wazuh::agent (
       package { $agent_package_name:
         ensure => "${agent_package_version}-${agent_package_revision}", # lint:ignore:security_package_pinned_version
       }
+      # todo pin package
     }
     'windows': {
       # file { $download_path:

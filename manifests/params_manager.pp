@@ -1,7 +1,7 @@
 # Copyright (C) 2015, Wazuh Inc.
 # Paramas file
 class wazuh::params_manager {
-  case $::kernel {
+  case $facts['kernel'] {
     'Linux': {
 
     # Installation
@@ -314,7 +314,7 @@ class wazuh::params_manager {
 
       #API
 
-      $wazuh_api_host = ['0.0.0.0']
+      $wazuh_api_host = '0.0.0.0'
       $wazuh_api_port = '55000'
 
       $wazuh_api_file =  undef
@@ -363,7 +363,7 @@ class wazuh::params_manager {
       $wazuh_api_template = 'wazuh/wazuh_api_yml.erb'
 
 
-      case $::osfamily {
+      case $facts['os']['name'] {
         'Debian': {
 
           $agent_service  = 'wazuh-agent'
@@ -378,7 +378,7 @@ class wazuh::params_manager {
             { 'location' => '/var/log/auth.log', 'log_format' => 'syslog' },
             {  'location' => '/var/ossec/logs/active-responses.log', 'log_format' => 'syslog'},
           ]
-          case $::lsbdistcodename {
+          case $facts['os']['distro']['codename'] {
             'xenial': {
               $server_service = 'wazuh-manager'
               $server_package = 'wazuh-manager'
@@ -430,7 +430,7 @@ class wazuh::params_manager {
               {  'location' => '/var/log/secure' , 'log_format' => 'syslog'},
               {  'location' => '/var/log/maillog' , 'log_format' => 'syslog'},
           ]
-          case $::operatingsystem {
+          case $facts['os']['name'] {
             'Amazon': {
               $ossec_service_provider = 'systemd'
               $api_service_provider = 'systemd'
@@ -441,7 +441,7 @@ class wazuh::params_manager {
               $wodle_openscap_content = undef
             }
             'CentOS': {
-              if ( $::operatingsystemrelease =~ /^6.*/ ) {
+              if ( $facts['os']['release']['full'] =~ /^6.*/ ) {
                 $ossec_service_provider = 'redhat'
                 $api_service_provider = 'redhat'
                 $wodle_openscap_content = {
@@ -451,7 +451,7 @@ class wazuh::params_manager {
                   }
                 }
               }
-              if ( $::operatingsystemrelease =~ /^7.*/ ) {
+              if ( $facts['os']['release']['full'] =~ /^7.*/ ) {
                 $ossec_service_provider = 'systemd'
                 $api_service_provider = 'systemd'
                 $wodle_openscap_content = {
@@ -463,7 +463,7 @@ class wazuh::params_manager {
               }
             }
             /^(RedHat|OracleLinux)$/: {
-              if ( $::operatingsystemrelease =~ /^6.*/ ) {
+              if ( $facts['os']['release']['full'] =~ /^6.*/ ) {
                 $ossec_service_provider = 'redhat'
                 $api_service_provider = 'redhat'
                 $wodle_openscap_content = {
@@ -476,7 +476,7 @@ class wazuh::params_manager {
                   }
                 }
               }
-              if ( $::operatingsystemrelease =~ /^7.*/ ) {
+              if ( $facts['os']['release']['full'] =~ /^7.*/ ) {
                 $ossec_service_provider = 'systemd'
                 $api_service_provider = 'systemd'
                 $wodle_openscap_content = {
@@ -491,7 +491,7 @@ class wazuh::params_manager {
               }
             }
             'Fedora': {
-              if ( $::operatingsystemrelease =~ /^(23|24|25).*/ ) {
+              if ( $facts['os']['release']['full'] =~ /^(23|24|25).*/ ) {
                 $ossec_service_provider = 'redhat'
                 $api_service_provider = 'redhat'
                 $wodle_openscap_content = {
@@ -503,7 +503,7 @@ class wazuh::params_manager {
               }
             }
             'AlmaLinux': {
-              if ( $::operatingsystemrelease =~ /^8.*/ ) {
+              if ( $facts['os']['release']['full'] =~ /^8.*/ ) {
                 $ossec_service_provider = 'redhat'
                 $api_service_provider = 'redhat'
               }
@@ -526,9 +526,9 @@ class wazuh::params_manager {
               {  'location' => '/var/log/secure' , 'log_format' => 'syslog'},
               {  'location' => '/var/log/maillog' , 'log_format' => 'syslog'},
           ]
-          case $::operatingsystem {
+          case $facts['os']['name'] {
             'SLES': {
-              if ( $::operatingsystemrelease =~ /^(12|15).*/ ) {
+              if ( $facts['os']['release']['full'] =~ /^(12|15).*/ ) {
                 $ossec_service_provider = 'redhat'
                 $api_service_provider = 'redhat'
               }

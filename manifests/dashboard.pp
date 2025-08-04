@@ -48,6 +48,7 @@ class wazuh::dashboard (
     ensure => $dashboard_version_install,
     name   => $dashboard_package,
   }
+  # todo pin package
 
   exec { "ensure full path of ${dashboard_path_certs}":
     path    => '/usr/bin:/bin',

@@ -14,10 +14,10 @@ class wazuh::manager (
 
       $ossec_logall                     = $wazuh::params_manager::ossec_logall,
       $ossec_logall_json                = $wazuh::params_manager::ossec_logall_json,
-      $ossec_emailnotification          = $wazuh::params_manager::ossec_emailnotification,
-      $ossec_emailto                    = $wazuh::params_manager::ossec_emailto,
-      $ossec_smtp_server                = $wazuh::params_manager::ossec_smtp_server,
-      $ossec_emailfrom                  = $wazuh::params_manager::ossec_emailfrom,
+      Boolean $ossec_emailnotification  = $wazuh::params_manager::ossec_emailnotification,
+      Array[String] $ossec_emailto      = $wazuh::params_manager::ossec_emailto,
+      String $ossec_smtp_server         = $wazuh::params_manager::ossec_smtp_server,
+      String $ossec_emailfrom           = $wazuh::params_manager::ossec_emailfrom,
       $ossec_email_maxperhour           = $wazuh::params_manager::ossec_email_maxperhour,
       $ossec_email_log_source           = $wazuh::params_manager::ossec_email_log_source,
       $ossec_email_idsname              = $wazuh::params_manager::ossec_email_idsname,
@@ -175,7 +175,7 @@ class wazuh::manager (
       $vulnerability_indexer_ssl_key            = $wazuh::params_manager::vulnerability_indexer_ssl_key,
 
       # syslog
-      $syslog_output                        = $wazuh::params_manager::syslog_output,
+      Boolean $syslog_output                = $wazuh::params_manager::syslog_output,
       $syslog_output_level                  = $wazuh::params_manager::syslog_output_level,
       $syslog_output_port                   = $wazuh::params_manager::syslog_output_port,
       $syslog_output_server                 = $wazuh::params_manager::syslog_output_server,
@@ -247,16 +247,16 @@ class wazuh::manager (
       $ar_repeated_offenders                = $wazuh::params_manager::ar_repeated_offenders,
 
       $local_decoder_template               = $wazuh::params_manager::local_decoder_template,
-      $decoder_exclude                      = $wazuh::params_manager::decoder_exclude,
+      Array $decoder_exclude                = $wazuh::params_manager::decoder_exclude,
       $local_rules_template                 = $wazuh::params_manager::local_rules_template,
-      $rule_exclude                         = $wazuh::params_manager::rule_exclude,
+      Array $rule_exclude                   = $wazuh::params_manager::rule_exclude,
       $shared_agent_template                = $wazuh::params_manager::shared_agent_template,
 
-      $wazuh_manager_verify_manager_ssl     = $wazuh::params_manager::wazuh_manager_verify_manager_ssl,
-      $wazuh_manager_server_crt             = $wazuh::params_manager::wazuh_manager_server_crt,
-      $wazuh_manager_server_key             = $wazuh::params_manager::wazuh_manager_server_key,
+      Boolean $wazuh_manager_verify_manager = $wazuh::params_manager::wazuh_manager_verify_manager_ssl,
+      Optional[String] $wazuh_manager_server_crt = $wazuh::params_manager::wazuh_manager_server_crt,
+      Optional[String] $wazuh_manager_server_key = $wazuh::params_manager::wazuh_manager_server_key,
 
-      $ossec_local_files                    = $::wazuh::params_manager::default_local_files,
+      $ossec_local_files                    = $wazuh::params_manager::default_local_files,
 
       # API
 
@@ -282,41 +282,30 @@ class wazuh::manager (
       $wazuh_api_cors_expose_headers            = $wazuh::params_manager::wazuh_api_cors_expose_headers,
 
 
-      $wazuh_api_cors_allow_credentials         = $::wazuh::params_manager::wazuh_api_cors_allow_credentials,
+      $wazuh_api_cors_allow_credentials         = $wazuh::params_manager::wazuh_api_cors_allow_credentials,
 
-      $wazuh_api_access_max_login_attempts      = $::wazuh::params_manager::wazuh_api_access_max_login_attempts,
-      $wazuh_api_access_block_time              = $::wazuh::params_manager::wazuh_api_access_block_time,
-      $wazuh_api_access_max_request_per_minute  = $::wazuh::params_manager::wazuh_api_access_max_request_per_minute,
-      $wazuh_api_drop_privileges                = $::wazuh::params_manager::wazuh_api_drop_privileges,
-      $wazuh_api_experimental_features          = $::wazuh::params_manager::wazuh_api_experimental_features,
+      $wazuh_api_access_max_login_attempts      = $wazuh::params_manager::wazuh_api_access_max_login_attempts,
+      $wazuh_api_access_block_time              = $wazuh::params_manager::wazuh_api_access_block_time,
+      $wazuh_api_access_max_request_per_minute  = $wazuh::params_manager::wazuh_api_access_max_request_per_minute,
+      $wazuh_api_drop_privileges                = $wazuh::params_manager::wazuh_api_drop_privileges,
+      $wazuh_api_experimental_features          = $wazuh::params_manager::wazuh_api_experimental_features,
 
-      $remote_commands_localfile                = $::wazuh::params_manager::remote_commands_localfile,
-      $remote_commands_localfile_exceptions     = $::wazuh::params_manager::remote_commands_localfile_exceptions,
-      $remote_commands_wodle                    = $::wazuh::params_manager::remote_commands_wodle,
-      $remote_commands_wodle_exceptions         = $::wazuh::params_manager::remote_commands_wodle_exceptions,
-      $limits_eps                               = $::wazuh::params_manager::limits_eps,
+      $remote_commands_localfile                = $wazuh::params_manager::remote_commands_localfile,
+      $remote_commands_localfile_exceptions     = $wazuh::params_manager::remote_commands_localfile_exceptions,
+      $remote_commands_wodle                    = $wazuh::params_manager::remote_commands_wodle,
+      $remote_commands_wodle_exceptions         = $wazuh::params_manager::remote_commands_wodle_exceptions,
+      $limits_eps                               = $wazuh::params_manager::limits_eps,
 
-      $wazuh_api_template                       = $::wazuh::params_manager::wazuh_api_template,
-
-
-
-
+      $wazuh_api_template                       = $wazuh::params_manager::wazuh_api_template,
 ) inherits wazuh::params_manager {
-  validate_legacy(
-    Boolean, 'validate_bool', $syslog_output,$wazuh_manager_verify_manager_ssl
-  )
-  validate_legacy(
-    Array, 'validate_array', $decoder_exclude, $rule_exclude
-  )
-
   ## Determine which kernel and family puppet is running on. Will be used on _localfile, _rootcheck, _syscheck & _sca
 
-  if ($::kernel == 'windows') {
+  if ($facts['kernel'] == 'windows') {
     $kernel = 'Linux'
 
   }else{
     $kernel = 'Linux'
-    if ($::osfamily == 'Debian'){
+    if ($facts['os']['family'] == 'Debian'){
       $os_family = 'debian'
     }else{
       $os_family = 'centos'
@@ -325,7 +314,7 @@ class wazuh::manager (
 
 
   if ( $ossec_syscheck_whodata_directories_1 == 'yes' ) or ( $ossec_syscheck_whodata_directories_2 == 'yes' ) {
-    case $::operatingsystem {
+    case $facts['os']['name'] {
       'Debian', 'debian', 'Ubuntu', 'ubuntu': {
         package { 'Installing Auditd...':
           name => 'auditd',
@@ -344,18 +333,13 @@ class wazuh::manager (
   }
 
   # This allows arrays of integers, sadly
-  # (commented due to stdlib version requirement)
-  validate_legacy(Boolean, 'validate_bool', $ossec_emailnotification)
   if ($ossec_emailnotification) {
     if $ossec_smtp_server == undef {
       fail('$ossec_emailnotification is enabled but $smtp_server was not set')
     }
-    validate_legacy(String, 'validate_string', $ossec_smtp_server)
-    validate_legacy(String, 'validate_string', $ossec_emailfrom)
-    validate_legacy(Array, 'validate_array', $ossec_emailto)
   }
 
-  if $::osfamily == 'windows' {
+  if $facts['os']['family'] == 'windows' {
     fail('The ossec module does not yet support installing the OSSEC HIDS server on Windows')
   }
 
@@ -404,25 +388,25 @@ class wazuh::manager (
 
   ## Declaring variables for localfile and wodles generation
 
-  case $::operatingsystem{
+  case $facts['os']['name']{
     'RedHat', 'OracleLinux':{
       $apply_template_os = 'rhel'
-      if ( $::operatingsystemrelease =~ /^9.*/ ){
+      if ( $facts['os']['release']['full'] =~ /^9.*/ ){
         $rhel_version = '9'
-      }elsif ( $::operatingsystemrelease =~ /^8.*/ ){
+      }elsif ( $facts['os']['release']['full'] =~ /^8.*/ ){
         $rhel_version = '8'
-      }elsif ( $::operatingsystemrelease =~ /^7.*/ ){
+      }elsif ( $facts['os']['release']['full'] =~ /^7.*/ ){
         $rhel_version = '7'
-      }elsif ( $::operatingsystemrelease =~ /^6.*/ ){
+      }elsif ( $facts['os']['release']['full'] =~ /^6.*/ ){
         $rhel_version = '6'
-      }elsif ( $::operatingsystemrelease =~ /^5.*/ ){
+      }elsif ( $facts['os']['release']['full'] =~ /^5.*/ ){
         $rhel_version = '5'
       }else{
         fail('This ossec module has not been tested on your distribution')
       }
     }'Debian', 'debian', 'Ubuntu', 'ubuntu':{
       $apply_template_os = 'debian'
-      if ( $::lsbdistcodename == 'wheezy') or ($::lsbdistcodename == 'jessie'){
+      if ( $facts['os']['distro']['codename'] == 'wheezy') or ($facts['os']['distro']['codename'] == 'jessie'){
         $debian_additional_templates = 'yes'
       }
     }'Amazon':{
@@ -630,10 +614,6 @@ class wazuh::manager (
   if $wazuh_manager_verify_manager_ssl {
 
     if ($wazuh_manager_server_crt != undef) and ($wazuh_manager_server_key != undef) {
-      validate_legacy(
-        String, 'validate_string', $wazuh_manager_server_crt, $wazuh_manager_server_key
-      )
-
       file { '/var/ossec/etc/sslmanager.key':
         content => $wazuh_manager_server_key,
         owner   => 'root',

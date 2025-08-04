@@ -10,7 +10,7 @@ class wazuh::filebeat_oss (
   $filebeat_oss_service = 'filebeat',
   $filebeat_oss_elastic_user = 'admin',
   $filebeat_oss_elastic_password = 'admin',
-  $filebeat_oss_version = '7.10.2',
+  $filebeat_oss_version = '7.10.2-1',
   $wazuh_app_version = '4.12.0_7.10.2',
   $wazuh_extensions_version = 'v4.12.0',
   $wazuh_filebeat_module = 'wazuh-filebeat-0.4.tar.gz',
@@ -20,11 +20,11 @@ class wazuh::filebeat_oss (
   $filebeat_filegroup = 'root',
   $filebeat_path_certs = '/etc/filebeat/certs',
 ) {
-
   package { 'filebeat':
     ensure => $filebeat_oss_version,
     name   => $filebeat_oss_package,
   }
+  # todo add an apt pin here if debian, versionlock on rhel?
 
   file { '/etc/filebeat/filebeat.yml':
     owner   => 'root',
@@ -99,7 +99,8 @@ class wazuh::filebeat_oss (
       mode    => '0400',
       replace => true,
       recurse => remote,
-      source  => "puppet:///modules/archive/${certfile_source}",
+      # todo same cert fallback... replace with exported resource
+      source  => "/etc/wazuh-certs/${certfile_source}",
     }
   }
 
