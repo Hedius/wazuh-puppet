@@ -5,25 +5,25 @@ class wazuh::agent (
 
   # Versioning and package names
 
-  $agent_package_version             = $wazuh::params_agent::agent_package_version,
+  String $agent_package_version      = $wazuh::params_agent::agent_package_version,
   $agent_package_revision            = $wazuh::params_agent::agent_package_revision,
-  $agent_package_name                = $wazuh::params_agent::agent_package_name,
-  $agent_service_name                = $wazuh::params_agent::agent_service_name,
+  String $agent_package_name         = $wazuh::params_agent::agent_package_name,
+  String $agent_service_name         = $wazuh::params_agent::agent_service_name,
   $agent_service_ensure              = $wazuh::params_agent::agent_service_ensure,
   $agent_msi_download_location       = $wazuh::params_agent::agent_msi_download_location,
 
   # Authd registration options
-  $manage_client_keys                = $wazuh::params_agent::manage_client_keys,
-  $agent_name                        = $wazuh::params_agent::agent_name,
-  $agent_group                       = $wazuh::params_agent::agent_group,
-  $agent_address                     = $wazuh::params_agent::agent_address,
-  $wazuh_agent_cert                  = $wazuh::params_agent::wazuh_agent_cert,
-  $wazuh_agent_key                   = $wazuh::params_agent::wazuh_agent_key,
-  $wazuh_agent_cert_path             = $wazuh::params_agent::wazuh_agent_cert_path,
-  $wazuh_agent_key_path              = $wazuh::params_agent::wazuh_agent_key_path,
-  $agent_auth_password               = $wazuh::params_agent::agent_auth_password,
-  $wazuh_manager_root_ca_pem         = $wazuh::params_agent::wazuh_manager_root_ca_pem,
-  $wazuh_manager_root_ca_pem_path    = $wazuh::params_agent::wazuh_manager_root_ca_pem_path,
+  $manage_client_keys                              = $wazuh::params_agent::manage_client_keys,
+  Optional[String] $agent_name                     = $wazuh::params_agent::agent_name,
+  Optional[String] $agent_group                    = $wazuh::params_agent::agent_group,
+  $agent_address                                   = $wazuh::params_agent::agent_address,
+  Optional[String] $wazuh_agent_cert               = $wazuh::params_agent::wazuh_agent_cert,
+  Optional[String] $wazuh_agent_key                = $wazuh::params_agent::wazuh_agent_key,
+  Optional[String] $wazuh_agent_cert_path          = $wazuh::params_agent::wazuh_agent_cert_path,
+  Optional[String] $wazuh_agent_key_path           = $wazuh::params_agent::wazuh_agent_key_path,
+  $agent_auth_password                             = $wazuh::params_agent::agent_auth_password,
+  Optional[String] $wazuh_manager_root_ca_pem      = $wazuh::params_agent::wazuh_manager_root_ca_pem,
+  Optional[String] $wazuh_manager_root_ca_pem_path = $wazuh::params_agent::wazuh_manager_root_ca_pem_path,
 
   ## ossec.conf generation parameters
   # Generation variables
@@ -248,8 +248,6 @@ class wazuh::agent (
   # )
   # This allows arrays of integers, sadly
   # (commented due to stdlib version requirement)
-  validate_legacy(String, 'validate_string', $agent_package_name)
-  validate_legacy(String, 'validate_string', $agent_service_name)
 
   if (( $ossec_syscheck_whodata_directories_1 == 'yes' ) or ( $ossec_syscheck_whodata_directories_2 == 'yes' )) {
     class { 'wazuh::audit':
@@ -268,62 +266,60 @@ class wazuh::agent (
   }
 
   # Package installation
-  case $::kernel {
+  case $facts['kernel'] {
     'Linux': {
       package { $agent_package_name:
         ensure => "${agent_package_version}-${agent_package_revision}", # lint:ignore:security_package_pinned_version
       }
     }
     'windows': {
-      file { $download_path:
-        ensure => directory,
-      }
+      # file { $download_path:
+      #   ensure => directory,
+      # }
 
-      -> file { 'wazuh-agent':
-        path               => "${download_path}\\wazuh-agent-${agent_package_version}-${agent_package_revision}.msi",
-        group              => 'Administrators',
-        mode               => '0774',
-        source             => "${agent_msi_download_location}/wazuh-agent-${agent_package_version}-${agent_package_revision}.msi",
-        source_permissions => ignore
-      }
+      # -> file { 'wazuh-agent':
+      #   path               => "${download_path}\\wazuh-agent-${agent_package_version}-${agent_package_revision}.msi",
+      #   group              => 'Administrators',
+      #   mode               => '0774',
+      #   source             => "${agent_msi_download_location}/wazuh-agent-${agent_package_version}-${agent_package_revision}.msi",
+      #   source_permissions => ignore
+      # }
 
-      # We dont need to pin the package version on Windows since we install if from the right MSI.
-      -> package { $agent_package_name:
-        ensure          => "${agent_package_version}",
-        provider        => 'windows',
-        source          => "${download_path}\\wazuh-agent-${agent_package_version}-${agent_package_revision}.msi",
+      # We do this with chocolatey. Choco hmmm :)
+      package { $agent_package_name:
+        ensure          => $agent_package_version,
+        # provider        => 'windows',
+        # source          => "${download_path}\\wazuh-agent-${agent_package_version}-${agent_package_revision}.msi",
         install_options => [
-          '/q',
-          "WAZUH_MANAGER=${wazuh_reporting_endpoint}",
-          "WAZUH_PROTOCOL=${ossec_protocol}",
+          "--params='/Manager:${wazuh_reporting_endpoint} /Protocol=${ossec_protocol} /AgentName=${trusted['hostname']}'"
         ],
       }
     }
     default: { fail('OS not supported') }
   }
 
-  case $::kernel {
+  case $facts['kernel'] {
   'Linux': {
     ## ossec.conf generation concats
-    case $::operatingsystem {
+    case $facts['os']['name'] {
       'RedHat', 'OracleLinux', 'Suse':{
         $apply_template_os = 'rhel'
-        if ( $::operatingsystemrelease =~ /^9.*/ ){
+        if ( $facts['os']['release']['full'] =~ /^9.*/ ){
           $rhel_version = '9'
-        }elsif ( $::operatingsystemrelease =~ /^8.*/ ){
+        }elsif ( $facts['os']['release']['full'] =~ /^8.*/ ){
           $rhel_version = '8'
-        }elsif ( $::operatingsystemrelease =~ /^7.*/ ){
+        }elsif ( $facts['os']['release']['full'] =~ /^7.*/ ){
           $rhel_version = '7'
-        }elsif ( $::operatingsystemrelease =~ /^6.*/ ){
+        }elsif ( $facts['os']['release']['full'] =~ /^6.*/ ){
           $rhel_version = '6'
-        }elsif ( $::operatingsystemrelease =~ /^5.*/ ){
+        }elsif ( $facts['os']['release']['full'] =~ /^5.*/ ){
           $rhel_version = '5'
         }else{
           fail('This ossec module has not been tested on your distribution')
         }
       }'Debian', 'debian', 'Ubuntu', 'ubuntu':{
         $apply_template_os = 'debian'
-        if ( $::lsbdistcodename == 'wheezy') or ($::lsbdistcodename == 'jessie'){
+        if ( $facts['os']['distro']['codename'] == 'wheezy') or ($facts['os']['distro']['codename'] == 'jessie'){
           $debian_additional_templates = 'yes'
         }
       }'Amazon':{
@@ -479,14 +475,12 @@ class wazuh::agent (
   # Agent registration and service setup
   if ($manage_client_keys == 'yes') {
     if $agent_name {
-      validate_legacy(String, 'validate_string', $agent_name)
       $agent_auth_option_name = "-A \"${agent_name}\""
     } else {
       $agent_auth_option_name = ''
     }
 
     if $agent_group {
-      validate_legacy(String, 'validate_string', $agent_group)
       $agent_auth_option_group = "-G \"${agent_group}\""
     } else {
       $agent_auth_option_group = ''
@@ -504,9 +498,9 @@ class wazuh::agent (
       $agent_auth_option_address = ''
     }
 
-    case $::kernel {
+    case $facts['kernel'] {
       'Linux': {
-        file { $::wazuh::params_agent::keys_file:
+        file { $wazuh::params_agent::keys_file:
           owner => $wazuh::params_agent::keys_owner,
           group => $wazuh::params_agent::keys_group,
           mode  => $wazuh::params_agent::keys_mode,
@@ -517,7 +511,6 @@ class wazuh::agent (
 
         # https://documentation.wazuh.com/4.0/user-manual/registering/manager-verification/manager-verification-registration.html
         if $wazuh_manager_root_ca_pem != undef {
-          validate_legacy(String, 'validate_string', $wazuh_manager_root_ca_pem)
           file { '/var/ossec/etc/rootCA.pem':
             owner   => $wazuh::params_agent::keys_owner,
             group   => $wazuh::params_agent::keys_group,
@@ -527,7 +520,6 @@ class wazuh::agent (
           }
           $agent_auth_option_manager = '-v /var/ossec/etc/rootCA.pem'
         } elsif $wazuh_manager_root_ca_pem_path != undef {
-          validate_legacy(String, 'validate_string', $wazuh_manager_root_ca_pem)
           $agent_auth_option_manager = "-v ${wazuh_manager_root_ca_pem_path}"
         } else {
           $agent_auth_option_manager = ''  # Avoid errors when compounding final command
@@ -535,8 +527,6 @@ class wazuh::agent (
 
         # https://documentation.wazuh.com/4.0/user-manual/registering/manager-verification/agent-verification-registration.html
         if ($wazuh_agent_cert != undef) and ($wazuh_agent_key != undef) {
-          validate_legacy(String, 'validate_string', $wazuh_agent_cert)
-          validate_legacy(String, 'validate_string', $wazuh_agent_key)
           file { '/var/ossec/etc/sslagent.cert':
             owner   => $wazuh::params_agent::keys_owner,
             group   => $wazuh::params_agent::keys_group,
@@ -554,8 +544,6 @@ class wazuh::agent (
 
           $agent_auth_option_agent = '-x /var/ossec/etc/sslagent.cert -k /var/ossec/etc/sslagent.key'
         } elsif ($wazuh_agent_cert_path != undef) and ($wazuh_agent_key_path != undef) {
-          validate_legacy(String, 'validate_string', $wazuh_agent_cert_path)
-          validate_legacy(String, 'validate_string', $wazuh_agent_key_path)
           $agent_auth_option_agent = "-x ${wazuh_agent_cert_path} -k ${wazuh_agent_key_path}"
         } else {
           $agent_auth_option_agent = ''
@@ -595,7 +583,7 @@ class wazuh::agent (
         exec { 'agent-auth-windows':
           command  => $agent_auth_command,
           provider => 'powershell',
-          onlyif   => "if ((Get-Item '${$::wazuh::params_agent::keys_file}').length -gt 0kb) {exit 1}",
+          onlyif   => "if ((Get-Item '${$wazuh::params_agent::keys_file}').length -gt 0kb) {exit 1}",
           require  => Concat['agent_ossec.conf'],
           before   => Service[$agent_service_name],
           notify   => Service[$agent_service_name],
@@ -625,7 +613,7 @@ class wazuh::agent (
 
   # SELinux
   # Requires selinux module specified in metadata.json
-  if ($::osfamily == 'RedHat' and $selinux == true) {
+  if ($facts['os']['family'] == 'RedHat' and $selinux == true) {
     selinux::module { 'ossec-logrotate':
       ensure    => 'present',
       source_te => 'puppet:///modules/wazuh/ossec-logrotate.te',
