@@ -74,7 +74,8 @@ class wazuh::dashboard (
       mode    => '0400',
       replace => true,
       recurse => remote,
-      source  => "puppet:///modules/archive/${certfile}",
+      # Todo... replace this with an exported resource.
+      source  => "/etc/wazuh-certs/${certfile}",
     }
   }
 
