@@ -1,6 +1,30 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [4.13.0]
+
+### Added
+
+- Add opensearch_dashboard.yml parameters. ([#1423](https://github.com/wazuh/wazuh-puppet/pull/1423))
+- Add missing malicious-ioc ruleset lists ([#1352](https://github.com/wazuh/wazuh-puppet/pull/1352))
+- Integrate bumper script via GitHub action. ([#1344](https://github.com/wazuh/wazuh-puppet/pull/1344))
+- Added repository_bumper script. ([#1302](https://github.com/wazuh/wazuh-puppet/pull/1302))
+
+### Changed
+
+- Syscollector configuration change ([#1432](https://github.com/wazuh/wazuh-puppet/pull/1432))
+- Change dependencies versions ([#1307](https://github.com/wazuh/wazuh-puppet/pull/1307))
+
+### Fixed
+
+- Metadata versions update ([#1445](https://github.com/wazuh/wazuh-puppet/pull/1445))
+- Modify dependencies version ([#1277](https://github.com/wazuh/wazuh-puppet/pull/1277))
+
+### Deleted
+
+- Remove default puppet reference version from workflow ([#1284](https://github.com/wazuh/wazuh-puppet/pull/1284))
+- Remove 'stable' branch ocurrencies ([#1281](https://github.com/wazuh/wazuh-puppet/pull/1281))
+
 ## [4.12.0]
 
 ### Added

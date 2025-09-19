@@ -1,7 +1,7 @@
 # Copyright (C) 2015, Wazuh Inc.
 # Wazuh-Agent configuration parameters
 class wazuh::params_agent {
-  $agent_package_version = '4.12.0'
+  $agent_package_version = '4.13.0'
   $agent_package_revision = '1'
   $agent_service_ensure = 'running'
   $agent_msi_download_location = 'https://packages.wazuh.com/4.x/windows'
@@ -295,6 +295,9 @@ class wazuh::params_agent {
       $ossec_ruleset_list = [ 'etc/lists/audit-keys',
         'etc/lists/amazon/aws-eventnames',
         'etc/lists/security-eventchannel',
+        'etc/lists/malicious-ioc/malicious-ip',
+        'etc/lists/malicious-ioc/malicious-domains',
+        'etc/lists/malicious-ioc/malware-hashes',
       ]
 
       $ossec_ruleset_user_defined_decoder_dir = 'etc/decoders'

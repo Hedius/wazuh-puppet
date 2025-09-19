@@ -5,7 +5,7 @@ class wazuh::params_manager {
     'Linux': {
 
     # Installation
-      $server_package_version                          = '4.12.0'
+      $server_package_version                          = '4.13.0'
 
       $manage_firewall                                 = false
 
@@ -247,6 +247,9 @@ class wazuh::params_manager {
       $ossec_ruleset_list = [ 'etc/lists/audit-keys',
         'etc/lists/amazon/aws-eventnames',
         'etc/lists/security-eventchannel',
+        'etc/lists/malicious-ioc/malicious-ip',
+        'etc/lists/malicious-ioc/malicious-domains',
+        'etc/lists/malicious-ioc/malware-hashes',
       ]
 
       $ossec_ruleset_user_defined_decoder_dir = 'etc/decoders'
@@ -553,7 +556,7 @@ class wazuh::params_manager {
       $keys_group = 'Administrators'
 
       $agent_service  = 'WazuhSvc'
-      $agent_package  = 'Wazuh Agent 4.12.0'
+      $agent_package  = 'Wazuh Agent 4.13.0'
       $server_service = ''
       $server_package = ''
       $api_service = ''

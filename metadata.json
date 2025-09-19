@@ -1,6 +1,6 @@
 {
   "name": "wazuh-wazuh",
-  "version": "4.12.0",
+  "version": "4.13.0",
   "author": "WAZUH",
   "summary": "Install and configure Wazuh-HIDS client and server",
   "license": "Apache-2.0",
@@ -10,39 +10,39 @@
   "dependencies": [
     {
       "name": "puppetlabs/stdlib",
-      "version_requirement": ">= 4.13.0 < 7.0.0"
+      "version_requirement": ">= 4.13.0 < 9.7.0"
     },
     {
       "name": "puppetlabs/concat",
-      "version_requirement": ">= 1.0.0 < 7.0.0"
+      "version_requirement": ">= 1.0.0 < 9.1.0"
     },
     {
       "name": "puppetlabs/apt",
-      "version_requirement": ">= 2.0.0 < 8.0.0"
+      "version_requirement": ">= 2.0.0 < 11.0.0"
     },
     {
       "name": "puppet/selinux",
-      "version_requirement": ">= 0.8.0 < 4.0.0"
+      "version_requirement": ">= 0.8.0 < 5.0.0"
     },
     {
       "name": "puppet/nodejs",
-      "version_requirement": ">= 3.0.0 < 8.0.0"
+      "version_requirement": ">= 3.0.0 < 11.0.0"
     },
     {
       "name": "puppetlabs/firewall",
-      "version_requirement": ">= 1.7.0 < 3.0.0"
+      "version_requirement": ">= 1.7.0 < 8.2.0"
     },
     {
       "name": "puppetlabs/powershell",
-      "version_requirement": ">= 2.0.0 < 5.0.0"
+      "version_requirement": ">= 2.0.0 < 6.0.2"
     },
     {
       "name": "puppet/zypprepo",
-      "version_requirement": "= 4.0.1"
+      "version_requirement": "= 5.0.0"
     },
     {
       "name": "puppet/archive",
-      "version_requirement": ">= 0.4.8 < 7.0.0"
+      "version_requirement": ">= 0.4.8 < 8.1.0"
     }
   ],
   "operatingsystem_support": [
@@ -119,7 +119,7 @@
   "tags": [
     "ossec",
     "hids",
-    "4.8",
+    "4.13",
     "wazuh"
   ],
   "pdk-version": "1.14.1",
