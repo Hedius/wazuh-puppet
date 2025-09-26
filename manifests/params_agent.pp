@@ -337,13 +337,13 @@ class wazuh::params_agent {
                 }
               }
             }
-            /^(wheezy|stretch|buster|bullseye|bookworm|sid|precise|trusty|vivid|wily|xenial|bionic|focal|groovy|jammy)$/: {
+            /^(wheezy|stretch|buster|bullseye|bookworm|trixie|sid|precise|trusty|vivid|wily|xenial|bionic|focal|groovy|jammy)$/: {
               $server_service = 'wazuh-manager'
               $server_package = 'wazuh-manager'
               $wodle_openscap_content = undef
             }
             default: {
-              fail("Module ${module_name} is not supported on ${::operatingsystem}")
+              fail("Module ${module_name} is not supported on ${facts['os']['distro']['description']}")
             }
           }
 
