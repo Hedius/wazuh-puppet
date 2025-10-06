@@ -22,8 +22,10 @@ class wazuh::indexer (
   $indexer_port = '9200',
   $indexer_discovery_hosts = [], # Empty array for single-node configuration
   $indexer_cluster_initial_master_nodes = ['node-1'],
-  $indexer_cluster_CN = ['node-1'],
+  $indexer_cluster_cn = ['node-1'],
 
+  $ca_org = 'OU=Wazuh,O=Wazuh,L=California,C=US',
+  $admin_cn = ['admin'],
   $cert_dir = '/etc/wazuh-certs',
 
   # JVM options
