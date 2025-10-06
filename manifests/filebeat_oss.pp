@@ -41,22 +41,24 @@ class wazuh::filebeat_oss (
   #  Use cmp to compare the content of local and remote file. When they differ than rm the file to get it recreated by the file resource.
   #  Needed since GitHub can only ETAG and result in changes of the mtime everytime.
   # TODO: Include file into the wazuh/wazuh-puppet project or use file { checksum => '..' } for this instead of the exec construct.
-  exec { 'cleanup /etc/filebeat/wazuh-template.json':
-    path    => ['/usr/bin', '/bin', '/usr/sbin', '/sbin'],
-    command => 'rm -f /etc/filebeat/wazuh-template.json',
-    onlyif  => 'test -f /etc/filebeat/wazuh-template.json',
-    unless  => "curl -s 'https://raw.githubusercontent.com/wazuh/wazuh/${wazuh_extensions_version}/extensions/elasticsearch/7.x/wazuh-template.json' | cmp -s '/etc/filebeat/wazuh-template.json'",
-  }
+  # TODO THIS NEEDS TO BE FIXED!!!!! DOes not work on offline nodes.
+  # 1. do not hardcode the url and allow an alternative download path / root url
+  # exec { 'cleanup /etc/filebeat/wazuh-template.json':
+  #   path    => ['/usr/bin', '/bin', '/usr/sbin', '/sbin'],
+  #   command => 'rm -f /etc/filebeat/wazuh-template.json',
+  #   onlyif  => 'test -f /etc/filebeat/wazuh-template.json',
+  #   unless  => "curl -s 'https://raw.githubusercontent.com/wazuh/wazuh/${wazuh_extensions_version}/extensions/elasticsearch/7.x/wazuh-template.json' | cmp -s '/etc/filebeat/wazuh-template.json'",
+  # }
 
-  -> file { '/etc/filebeat/wazuh-template.json':
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0440',
-    replace => false,  # only copy content when file not exist
-    source  => "https://raw.githubusercontent.com/wazuh/wazuh/${wazuh_extensions_version}/extensions/elasticsearch/7.x/wazuh-template.json",
-    notify  => Service['filebeat'],
-    require => Package['filebeat'],
-  }
+  # -> file { '/etc/filebeat/wazuh-template.json':
+  #   owner   => 'root',
+  #   group   => 'root',
+  #   mode    => '0440',
+  #   replace => false,  # only copy content when file not exist
+  #   source  => "https://raw.githubusercontent.com/wazuh/wazuh/${wazuh_extensions_version}/extensions/elasticsearch/7.x/wazuh-template.json",
+  #   notify  => Service['filebeat'],
+  #   require => Package['filebeat'],
+  # }
 
   archive { "/tmp/${$wazuh_filebeat_module}":
     ensure       => present,
