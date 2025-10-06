@@ -103,7 +103,7 @@ class wazuh::filebeat_oss (
       recurse   => remote,
       # todo same cert fallback... replace with exported resource
       source    => "${cert_dir}/${certfile_source}",
-      show_diff => false
+      show_diff => false,
     }
   }
 
