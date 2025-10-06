@@ -95,14 +95,15 @@ class wazuh::filebeat_oss (
   }
   $_certfiles.each |String $certfile_source, String $certfile_target| {
     file { "${filebeat_path_certs}/${certfile_target}":
-      ensure  => file,
-      owner   => $filebeat_fileuser,
-      group   => $filebeat_filegroup,
-      mode    => '0400',
-      replace => true,
-      recurse => remote,
+      ensure    => file,
+      owner     => $filebeat_fileuser,
+      group     => $filebeat_filegroup,
+      mode      => '0400',
+      replace   => true,
+      recurse   => remote,
       # todo same cert fallback... replace with exported resource
-      source  => "${cert_dir}/${certfile_source}",
+      source    => "${cert_dir}/${certfile_source}",
+      show_diff => false
     }
   }
 
