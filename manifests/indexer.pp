@@ -25,7 +25,7 @@ class wazuh::indexer (
   $indexer_cluster_cn = ['node-1'],
 
   $ca_org = 'OU=Wazuh,O=Wazuh,L=California,C=US',
-  $admin_cn = ['admin'],
+  $admin_dn = ['admin'],
   $cert_dir = '/etc/wazuh-certs',
 
   # JVM options
