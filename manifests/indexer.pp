@@ -73,14 +73,15 @@ class wazuh::indexer (
 
   $certs.each |String $certfile, String $certsource| {
     file { "${indexer_path_certs}/${certfile}.pem":
-      ensure  => file,
-      owner   => $indexer_fileuser,
-      group   => $indexer_filegroup,
-      mode    => '0400',
-      replace => true,
-      recurse => remote,
+      ensure    => file,
+      owner     => $indexer_fileuser,
+      group     => $indexer_filegroup,
+      mode      => '0400',
+      replace   => true,
+      recurse   => remote,
       # todo - same crt workaround
-      source  => "${cert_dir}/${certsource}.pem",
+      source    => "${cert_dir}/${certsource}.pem",
+      show_diff => false,
     }
   }
 
