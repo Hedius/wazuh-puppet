@@ -19,6 +19,8 @@ class wazuh::filebeat_oss (
   $filebeat_fileuser = 'root',
   $filebeat_filegroup = 'root',
   $filebeat_path_certs = '/etc/filebeat/certs',
+
+  Stdlib::Absolutepath $cert_dir = '/etc/wazuh-certs',
 ) {
   package { 'filebeat':
     ensure => $filebeat_oss_version,
@@ -87,8 +89,8 @@ class wazuh::filebeat_oss (
   }
 
   $_certfiles = {
-    "manager-${wazuh_node_name}.pem"     => 'filebeat.pem',
-    "manager-${wazuh_node_name}-key.pem" => 'filebeat-key.pem',
+    "${wazuh_node_name}.pem"     => 'filebeat.pem',
+    "${wazuh_node_name}-key.pem" => 'filebeat-key.pem',
     'root-ca.pem'    => 'root-ca.pem',
   }
   $_certfiles.each |String $certfile_source, String $certfile_target| {
@@ -100,7 +102,7 @@ class wazuh::filebeat_oss (
       replace => true,
       recurse => remote,
       # todo same cert fallback... replace with exported resource
-      source  => "/etc/wazuh-certs/${certfile_source}",
+      source  => "${cert_dir}/${certfile_source}",
     }
   }
 
