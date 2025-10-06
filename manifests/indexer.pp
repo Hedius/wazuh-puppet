@@ -24,10 +24,11 @@ class wazuh::indexer (
   $indexer_cluster_initial_master_nodes = ['node-1'],
   $indexer_cluster_CN = ['node-1'],
 
+  $cert_dir = '/etc/wazuh-certs',
+
   # JVM options
   $jvm_options_memory = '1g',
 ) {
-
   # assign version according to the package manager
   case $facts['os']['family'] {
     'Debian': {
@@ -59,14 +60,17 @@ class wazuh::indexer (
     mode   => '0500',
   }
 
-  [
-   "indexer-$indexer_node_name.pem",
-   "indexer-$indexer_node_name-key.pem",
-   'root-ca.pem',
-   'admin.pem',
-   'admin-key.pem',
-  ].each |String $certfile| {
-    file { "${indexer_path_certs}/${certfile}":
+  # New type sinc crt tool has a different logic now. generates hostname.pem no longer indexer-hostname.pem
+  $certs = {
+    'root-ca' => 'root-ca',
+    'admin' => 'admin',
+    'admin-key' => 'admin-key',
+    'indexer' => $trusted['hostname'],
+    'indexer-key' => "${trusted['hostname']}-key",
+  }
+
+  $certs.each |String $certfile, String $certsource| {
+    file { "${indexer_path_certs}/${certfile}.pem":
       ensure  => file,
       owner   => $indexer_fileuser,
       group   => $indexer_filegroup,
@@ -74,11 +78,9 @@ class wazuh::indexer (
       replace => true,
       recurse => remote,
       # todo - same crt workaround
-      source  => "/etc/wazuh-certs/${certfile}",
+      source  => "${cert_dir}/${certsource}.pem",
     }
   }
-
-
 
   file { 'configuration file':
     path    => '/etc/wazuh-indexer/opensearch.yml',
