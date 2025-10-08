@@ -69,14 +69,14 @@ class wazuh::dashboard (
     'dashboard-key' => "${trusted['hostname']}-key",
   }
   $certs.each |String $certfile, String $certsource| {
-    file { "${dashboard_path_certs}/${certfile}":
+    file { "${dashboard_path_certs}/${certfile}.pem":
       ensure    => file,
       owner     => $dashboard_fileuser,
       group     => $dashboard_filegroup,
       mode      => '0400',
       replace   => true,
       recurse   => remote,
-      source    => "${cert_dir}/${certsource}",
+      source    => "${cert_dir}/${certsource}.pem",
       show_diff => false,
     }
   }
