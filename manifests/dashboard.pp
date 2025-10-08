@@ -31,8 +31,8 @@ class wazuh::dashboard (
     },
   ],
 
+  Stdlib::Absolutepath $cert_dir = '/etc/wazuh-certs',
 ) {
-
   # assign version according to the package manager
   case $facts['os']['family'] {
     'Debian': {
@@ -63,20 +63,21 @@ class wazuh::dashboard (
     mode   => '0500',
   }
 
-  [
-    'dashboard.pem',
-    'dashboard-key.pem',
-    'root-ca.pem',
-  ].each |String $certfile| {
+  $certs = {
+    'root-ca' => 'root-ca',
+    'dashboard' => $trusted['hostname'],
+    'dashboard-key' => "${trusted['hostname']}-key",
+  }
+  $certs.each |String $certfile, String $certsource| {
     file { "${dashboard_path_certs}/${certfile}":
-      ensure  => file,
-      owner   => $dashboard_fileuser,
-      group   => $dashboard_filegroup,
-      mode    => '0400',
-      replace => true,
-      recurse => remote,
-      # Todo... replace this with an exported resource.
-      source  => "/etc/wazuh-certs/${certfile}",
+      ensure    => file,
+      owner     => $dashboard_fileuser,
+      group     => $dashboard_filegroup,
+      mode      => '0400',
+      replace   => true,
+      recurse   => remote,
+      source    => "${cert_dir}/${certsource}",
+      show_diff => false,
     }
   }
 

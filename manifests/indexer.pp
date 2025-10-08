@@ -26,7 +26,7 @@ class wazuh::indexer (
 
   $ca_org = 'OU=Wazuh,O=Wazuh,L=California,C=US',
   $admin_dn = ['admin'],
-  $cert_dir = '/etc/wazuh-certs',
+  Stdlib::Absolutepath $cert_dir = '/etc/wazuh-certs',
 
   # JVM options
   $jvm_options_memory = '1g',
