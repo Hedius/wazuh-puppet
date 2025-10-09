@@ -63,9 +63,6 @@ class wazuh::filebeat_oss (
   String $template_repo = 'https://raw.githubusercontent.com/wazuh/wazuh',
   String $module_repo = 'https://packages.wazuh.com/4.x/filebeat',
 ) {
-  package { $package:
-    ensure => $filebeat_oss_version,
-  }
   if $facts['os']['family'] == 'Debian' {
     apt::pin { 'filebeat':
       packages => $package,
@@ -73,38 +70,42 @@ class wazuh::filebeat_oss (
       version  => $filebeat_oss_version,
     }
   }
+  package { $package:
+    ensure => $filebeat_oss_version,
+  }
+
   # Todo versionlock for rhel
 
   $config = {
-    'filebeat.modules' => [
+    'filebeat.modules'            => [
       {
-        'module' => 'wazuh',
-        'alerts' => { 'enabled' => true },
+        'module'   => 'wazuh',
+        'alerts'   => { 'enabled' => true },
         'archives' => { 'enabled' => $enable_archives },
       },
     ],
     'setup.template.json.enabled' => true,
-    'setup.template.json.path' => '/etc/filebeat/wazuh-template.json',
-    'setup.template.json.name' => 'wazuh',
-    'setup.template.overwrite' => true,
+    'setup.template.json.path'    => '/etc/filebeat/wazuh-template.json',
+    'setup.template.json.name'    => 'wazuh',
+    'setup.template.overwrite'    => true,
     # Send events directly to Indexer
-    'output.elasticsearch' => {
-      'hosts' => $indexers,
-      'username' => $elastic_user,
-      'password' => $elastic_password,
-      'protocol' => 'https',
+    'output.elasticsearch'        => {
+      'hosts'                       => $indexers,
+      'username'                    => $elastic_user,
+      'password'                    => $elastic_password,
+      'protocol'                    => 'https',
       'ssl.certificate_authorities' => ['/etc/filebeat/certs/root-ca.pem'],
-      'ssl.certificate' => '/etc/filebeat/certs/filebeat.pem',
-      'ssl.key' => '/etc/filebeat/certs/filebeat-key.pem',
+      'ssl.certificate'             => '/etc/filebeat/certs/filebeat.pem',
+      'ssl.key'                     => '/etc/filebeat/certs/filebeat-key.pem',
     },
-    'setup.ilm.enabled' => false,
-    'logging.metrics.enabled' => false,
-    'seccomp' => {
+    'setup.ilm.enabled'           => false,
+    'logging.metrics.enabled'     => false,
+    'seccomp'                     => {
       'default_action' => 'allow',
-      'syscalls' => [
+      'syscalls'       => [
         {
           'action' => 'allow',
-          'names' => ['rseq'],
+          'names'  => ['rseq'],
         }
       ],
     },
@@ -176,7 +177,7 @@ class wazuh::filebeat_oss (
   $_certfiles = {
     "${wazuh_node_name}.pem"     => 'filebeat.pem',
     "${wazuh_node_name}-key.pem" => 'filebeat-key.pem',
-    'root-ca.pem'    => 'root-ca.pem',
+    'root-ca.pem'                => 'root-ca.pem',
   }
   $_certfiles.each |String $certfile_source, String $certfile_target| {
     file { "${filebeat_path_certs}/${certfile_target}":
@@ -197,5 +198,5 @@ class wazuh::filebeat_oss (
     enable  => true,
     name    => $service,
     require => Package['filebeat'],
-  }
+  },
 }
