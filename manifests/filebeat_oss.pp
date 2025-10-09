@@ -60,7 +60,7 @@ class wazuh::filebeat_oss (
 
   Stdlib::Absolutepath $cert_dir = '/etc/wazuh-certs',
 
-  String $template_repo = 'https://raw.githubusercontent.com/wazuh/wazuh/',
+  String $template_repo = 'https://raw.githubusercontent.com/wazuh/wazuh',
   String $module_repo = 'https://packages.wazuh.com/4.x/filebeat',
 ) {
   package { $package:
