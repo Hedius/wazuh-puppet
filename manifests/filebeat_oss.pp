@@ -198,5 +198,5 @@ class wazuh::filebeat_oss (
     enable  => true,
     name    => $service,
     require => Package['filebeat'],
-  },
+  }
 }
