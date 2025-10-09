@@ -107,12 +107,13 @@ class wazuh::dashboard (
   }
 
   file { '/etc/wazuh-dashboard/opensearch_dashboards.yml':
-    content => stdlib::to_yaml($config),
-    group   => $dashboard_filegroup,
-    mode    => '0640',
-    owner   => $dashboard_fileuser,
-    require => Package['wazuh-dashboard'],
-    notify  => Service['wazuh-dashboard'],
+    content   => stdlib::to_yaml($config),
+    group     => $dashboard_filegroup,
+    mode      => '0640',
+    owner     => $dashboard_fileuser,
+    require   => Package['wazuh-dashboard'],
+    notify    => Service['wazuh-dashboard'],
+    show_diff => false,
   }
 
   file { ['/usr/share/wazuh-dashboard/data/wazuh/', '/usr/share/wazuh-dashboard/data/wazuh/config']:
@@ -123,11 +124,12 @@ class wazuh::dashboard (
     require => Package['wazuh-dashboard'],
   }
   -> file { '/usr/share/wazuh-dashboard/data/wazuh/config/wazuh.yml':
-    content => template('wazuh/wazuh_yml.erb'),
-    group   => $dashboard_filegroup,
-    mode    => '0600',
-    owner   => $dashboard_fileuser,
-    notify  => Service['wazuh-dashboard'],
+    content   => template('wazuh/wazuh_yml.erb'),
+    group     => $dashboard_filegroup,
+    mode      => '0600',
+    owner     => $dashboard_fileuser,
+    notify    => Service['wazuh-dashboard'],
+    show_diff => false,
   }
 
   unless $use_keystore {
