@@ -43,6 +43,13 @@ class wazuh::indexer (
   }
 
   # install package
+  if $facts['os']['family'] == 'Debian' {
+    apt::pin { 'wazuh-indexer':
+      packages => $indexer_package,
+      priority => 1001,
+      version  => $indexer_version_install,
+    }
+  }
   package { 'wazuh-indexer':
     ensure => $indexer_version_install,
     name   => $indexer_package,
