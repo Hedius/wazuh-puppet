@@ -102,6 +102,8 @@ class wazuh::dashboard (
     'opensearch_security.cookie.ttl'           => 900000,
     'opensearch_security.session.ttl'          => 900000,
     'opensearch_security.session.keepalive'    => true,
+    'opensearch.username'                      => $dashboard_user,
+    'opensearch.password'                      => $dashboard_password,
   }
 
   file { '/etc/wazuh-dashboard/opensearch_dashboards.yml':
