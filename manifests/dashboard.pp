@@ -9,13 +9,13 @@ class wazuh::dashboard (
   $dashboard_service = 'wazuh-dashboard',
   $dashboard_version = '4.13.1',
   $indexer_server_ip = 'localhost',
-  $indexer_server_port = '9200',
+  Stdlib::Port $indexer_server_port = 9200,
   $manager_api_host = '127.0.0.1',
   $dashboard_path_certs = '/etc/wazuh-dashboard/certs',
   $dashboard_fileuser = 'wazuh-dashboard',
   $dashboard_filegroup = 'wazuh-dashboard',
 
-  $dashboard_server_port = '443',
+  Stdlib::Port $dashboard_server_port = 443,
   $dashboard_server_host = '0.0.0.0',
   Array[String] $dashboard_server_hosts = ["https://${indexer_server_ip}:${indexer_server_port}"],
 
