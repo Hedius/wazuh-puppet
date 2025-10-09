@@ -1,5 +1,9 @@
 # Copyright (C) 2015, Wazuh Inc.
 # Setup for Wazuh Dashboard
+# @param dashboard_server_hosts
+#   List of URLs to the wazuh-indexers
+# @param cert_dir
+#   Local directory on server that stores certificates. (Used as a base for copying it to the dashboard server.)
 class wazuh::dashboard (
   $dashboard_package = 'wazuh-dashboard',
   $dashboard_service = 'wazuh-dashboard',
@@ -13,7 +17,7 @@ class wazuh::dashboard (
 
   $dashboard_server_port = '443',
   $dashboard_server_host = '0.0.0.0',
-  $dashboard_server_hosts = "https://${indexer_server_ip}:${indexer_server_port}",
+  Array[String] $dashboard_server_hosts = ["https://${indexer_server_ip}:${indexer_server_port}"],
 
   # If the keystore is used, the credentials are not managed by the module (TODO).
   # If use_keystore is false, the keystore is deleted, the dashboard use the credentials in the configuration file.
@@ -81,8 +85,27 @@ class wazuh::dashboard (
     }
   }
 
+  $config = {
+    'server.host'                              => $dashboard_server_host,
+    'server.port'                              => $dashboard_server_port,
+    'opensearch.hosts'                         => $dashboard_server_hosts,
+    'opensearch.ssl.verificationMode'          => 'certificate',
+    'opensearch.requestHeadersWhitelist'       => ['securitytenant', 'Authorization'],
+    'opensearch_security.multitenancy.enabled' => false,
+    'opensearch_security.readonly_mode.roles'  => ['kibana_read_only'],
+    'server.ssl.enabled'                       => true,
+    'server.ssl.key'                           => "${dashboard_path_certs}/dashboard-key.pem",
+    'server.ssl.certificate'                   => "${dashboard_path_certs}/dashboard.pem",
+    'opensearch.ssl.certificateAuthorities'    => ["${dashboard_path_certs}/root-ca.pem"],
+    'uiSettings.overrides.defaultRoute'        => '/app/wz-home',
+    # Session epiration settings
+    'opensearch_security.cookie.ttl'           => 900000,
+    'opensearch_security.session.ttl'          => 900000,
+    'opensearch_security.session.keepalive'    => true,
+  }
+
   file { '/etc/wazuh-dashboard/opensearch_dashboards.yml':
-    content => template('wazuh/wazuh_dashboard_yml.erb'),
+    content => stdlib::to_yaml($config),
     group   => $dashboard_filegroup,
     mode    => '0640',
     owner   => $dashboard_fileuser,
@@ -90,7 +113,7 @@ class wazuh::dashboard (
     notify  => Service['wazuh-dashboard'],
   }
 
-  file { [ '/usr/share/wazuh-dashboard/data/wazuh/', '/usr/share/wazuh-dashboard/data/wazuh/config' ]:
+  file { ['/usr/share/wazuh-dashboard/data/wazuh/', '/usr/share/wazuh-dashboard/data/wazuh/config']:
     ensure  => 'directory',
     group   => $dashboard_filegroup,
     mode    => '0755',
