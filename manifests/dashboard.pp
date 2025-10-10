@@ -106,7 +106,14 @@ class wazuh::dashboard (
     'opensearch.password'                      => $dashboard_password,
   }
 
-  file { '/etc/wazuh-dashboard/opensearch_dashboards.yml':
+  $config_file = '/etc/wazuh-dashboard/opensearch_dashboards.yml'
+  file { '/etc/wazuh-dashboard':
+    ensure => directory,
+    owner  => $dashboard_fileuser,
+    group  => $dashboard_filegroup,
+    mode   => '0750',
+  }
+  -> file { $config_file:
     content   => stdlib::to_yaml($config),
     group     => $dashboard_filegroup,
     mode      => '0640',
@@ -137,6 +144,19 @@ class wazuh::dashboard (
       ensure  => absent,
       require => Package['wazuh-dashboard'],
       before  => Service['wazuh-dashboard'],
+    }
+  } else {
+    exec { 'update-dashboard-pw':
+      # Exec Update pw in dashboard keystore whenever smth changes here
+      # E.g. we write a new kibanaserver pw into the config file.
+      # command stolen from the wazuh pw tool scripts
+      # lint:ignore:140chars
+      command     => "echo \"${dashboard_password}\" | /usr/share/wazuh-dashboard/bin/opensearch-dashboards-keystore --allow-root add -f --stdin opensearch.password > /dev/null 2>&1",
+      # lint:endignore,
+      path        => $facts['path'],
+      refreshonly => true,
+      subscribe   => File[$config_file],
+      notify      => Service['wazuh-dashboard'],
     }
   }
 
