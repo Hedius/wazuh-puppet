@@ -4,6 +4,8 @@
 #   List of URLs to the wazuh-indexers
 # @param cert_dir
 #   Local directory on server that stores certificates. (Used as a base for copying it to the dashboard server.)
+# @param config
+#   config overrides
 class wazuh::dashboard (
   $dashboard_package = 'wazuh-dashboard',
   $dashboard_service = 'wazuh-dashboard',
@@ -36,6 +38,8 @@ class wazuh::dashboard (
   ],
 
   Stdlib::Absolutepath $cert_dir = '/etc/wazuh-certs',
+
+  Hash $config = {},
 ) {
   # assign version according to the package manager
   case $facts['os']['family'] {
@@ -85,7 +89,7 @@ class wazuh::dashboard (
     }
   }
 
-  $config = {
+  $default_config = {
     'server.host'                              => $dashboard_server_host,
     'server.port'                              => $dashboard_server_port,
     'opensearch.hosts'                         => $dashboard_server_hosts,
@@ -114,7 +118,7 @@ class wazuh::dashboard (
     mode   => '0750',
   }
   -> file { $config_file:
-    content   => stdlib::to_yaml($config),
+    content   => stdlib::to_yaml(deep_merge($default_config, $config)),
     group     => $dashboard_filegroup,
     mode      => '0640',
     owner     => $dashboard_fileuser,
