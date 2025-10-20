@@ -589,70 +589,71 @@ class wazuh::manager (
       require   => Package[$wazuh::params_manager::server_package],
       notify    => Service[$wazuh::params_manager::server_service],
     }
+  }
 
-    # https://documentation.wazuh.com/current/user-manual/registering/use-registration-service.html#verify-manager-via-ssl
-    if $wazuh_manager_verify_manager_ssl {
-      if ($wazuh_manager_server_crt != undef) and ($wazuh_manager_server_key != undef) {
-        file { '/var/ossec/etc/sslmanager.key':
-          content => $wazuh_manager_server_key,
-          owner   => 'root',
-          group   => 'wazuh',
-          mode    => '0640',
-          require => Package[$wazuh::params_manager::server_package],
-          notify  => Service[$wazuh::params_manager::server_service],
-        }
-
-        file { '/var/ossec/etc/sslmanager.cert':
-          content => $wazuh_manager_server_crt,
-          owner   => 'root',
-          group   => 'wazuh',
-          mode    => '0640',
-          require => Package[$wazuh::params_manager::server_package],
-          notify  => Service[$wazuh::params_manager::server_service],
-        }
+  # https://documentation.wazuh.com/current/user-manual/registering/use-registration-service.html#verify-manager-via-ssl
+  if $wazuh_manager_verify_manager_ssl {
+    if ($wazuh_manager_server_crt != undef) and ($wazuh_manager_server_key != undef) {
+      file { '/var/ossec/etc/sslmanager.key':
+        content => $wazuh_manager_server_key,
+        owner   => 'root',
+        group   => 'wazuh',
+        mode    => '0640',
+        require => Package[$wazuh::params_manager::server_package],
+        notify  => Service[$wazuh::params_manager::server_service],
       }
-    }
 
-    # Manage firewall
-    if $manage_firewall == true {
-      include firewall
-      firewall { '1514 wazuh-manager':
-        dport  => $ossec_remote_port,
-        proto  => $ossec_remote_protocol,
-        action => 'accept',
-        state  => [
-          'NEW',
-          'RELATED',
-        'ESTABLISHED'],
+      file { '/var/ossec/etc/sslmanager.cert':
+        content => $wazuh_manager_server_crt,
+        owner   => 'root',
+        group   => 'wazuh',
+        mode    => '0640',
+        require => Package[$wazuh::params_manager::server_package],
+        notify  => Service[$wazuh::params_manager::server_service],
       }
-    }
-    if $ossec_cluster_enable_firewall == 'yes' {
-      include firewall
-      firewall { '1516 wazuh-manager':
-        dport  => $ossec_cluster_port,
-        proto  => $ossec_remote_protocol,
-        action => 'accept',
-        state  => [
-          'NEW',
-          'RELATED',
-        'ESTABLISHED'],
-      }
-    }
-
-    if ( $ossec_syscheck_whodata_directories_1 == 'yes' ) or ( $ossec_syscheck_whodata_directories_2 == 'yes' ) {
-      exec { 'Ensure wazuh-fim rule is added to auditctl':
-        command => '/sbin/auditctl -l',
-        unless  => '/sbin/auditctl -l | grep wazuh_fim',
-        tries   => 2,
-      }
-    }
-
-    file { '/var/ossec/api/configuration/api.yaml':
-      owner   => 'root',
-      group   => 'wazuh',
-      mode    => '0640',
-      content => template('wazuh/wazuh_api_yml.erb'),
-      require => Package[$wazuh::params_manager::server_package],
-      notify  => Service[$wazuh::params_manager::server_service],
     }
   }
+
+  # Manage firewall
+  if $manage_firewall == true {
+    include firewall
+    firewall { '1514 wazuh-manager':
+      dport  => $ossec_remote_port,
+      proto  => $ossec_remote_protocol,
+      action => 'accept',
+      state  => [
+        'NEW',
+        'RELATED',
+      'ESTABLISHED'],
+    }
+  }
+  if $ossec_cluster_enable_firewall == 'yes' {
+    include firewall
+    firewall { '1516 wazuh-manager':
+      dport  => $ossec_cluster_port,
+      proto  => $ossec_remote_protocol,
+      action => 'accept',
+      state  => [
+        'NEW',
+        'RELATED',
+      'ESTABLISHED'],
+    }
+  }
+
+  if ( $ossec_syscheck_whodata_directories_1 == 'yes' ) or ( $ossec_syscheck_whodata_directories_2 == 'yes' ) {
+    exec { 'Ensure wazuh-fim rule is added to auditctl':
+      command => '/sbin/auditctl -l',
+      unless  => '/sbin/auditctl -l | grep wazuh_fim',
+      tries   => 2,
+    }
+  }
+
+  file { '/var/ossec/api/configuration/api.yaml':
+    owner   => 'root',
+    group   => 'wazuh',
+    mode    => '0640',
+    content => template('wazuh/wazuh_api_yml.erb'),
+    require => Package[$wazuh::params_manager::server_package],
+    notify  => Service[$wazuh::params_manager::server_service],
+  }
+}
