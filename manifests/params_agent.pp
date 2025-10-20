@@ -456,13 +456,8 @@ class wazuh::params_agent {
                 }
               }
             }
-            'AlmaLinux': {
-              if ( $facts['os']['release']['full'] =~ /^8.*/ ) {
-                $ossec_service_provider = 'redhat'
-              }
-            }
-            'Rocky': {
-              if ( $facts['os']['release']['full'] =~ /^8.*/ ) {
+            'AlmaLinux', 'Rocky': {
+              if Integer($facts['os']['release']['major']) >= 8 {
                 $ossec_service_provider = 'redhat'
               }
             }
