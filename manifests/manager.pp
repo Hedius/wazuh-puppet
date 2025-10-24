@@ -1,5 +1,12 @@
 # Copyright (C) 2015, Wazuh Inc.
 # Main ossec server config
+# @param syslog_receiver
+#   Enabled syslog receiving on the host.
+# @param syslog_receiver_allowed_ips
+#   Allowed IPs for syslog. All by default. todo this param needs to be converted
+#   into an array
+# @param syslog_receiver_local_ip
+#   Ip to bind to. All interfaces by default.
 class wazuh::manager (
   # Installation
 
@@ -176,6 +183,13 @@ class wazuh::manager (
   $syslog_output_port                   = $wazuh::params_manager::syslog_output_port,
   $syslog_output_server                 = $wazuh::params_manager::syslog_output_server,
   $syslog_output_format                 = $wazuh::params_manager::syslog_output_format,
+
+  # syslog input
+  Boolean $syslog_receiver                                                = false,
+  # Array with join would be cleaner
+  # multi entry with ,
+  String $syslog_receiver_allowed_ips                                     = '0.0.0.0/0',
+  Variant[Stdlib::IP::Address, Enum['0.0.0.0']] $syslog_receiver_local_ip = '0.0.0.0',
 
   # Authd configuration
   $ossec_auth_disabled                  = $wazuh::params_manager::ossec_auth_disabled,
@@ -416,6 +430,14 @@ class wazuh::manager (
       target  => 'manager_ossec.conf',
       order   => '01',
       content => template($ossec_manager_template);
+  }
+
+  if $syslog_receiver {
+    concat::fragment {
+      'ossec.conf_syslog_receiver':
+        target  => 'manager_ossec.conf',
+        content => template('wazuh/fragments/_syslog_receiver.erb');
+    }
   }
 
   if ($syslog_output == true) {
