@@ -187,7 +187,7 @@ class wazuh::manager (
   Boolean $syslog_receiver                                                = false,
   # Array with join would be cleaner
   # multi entry with ,
-  Array[Stdlib::IP::Address::CIDR] $syslog_receiver_allowed_ips           = '0.0.0.0/0',
+  Array[Stdlib::IP::Address::CIDR] $syslog_receiver_allowed_ips           = ['0.0.0.0/0'],
   Variant[Stdlib::IP::Address, Enum['0.0.0.0']] $syslog_receiver_local_ip = '0.0.0.0',
 
   # Authd configuration
