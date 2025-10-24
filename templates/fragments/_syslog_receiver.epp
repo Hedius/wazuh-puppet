@@ -1,10 +1,14 @@
+<%- |
+  Array[Stdlib::IP::Addres::CIDR] $allowed_ips,
+  Variant[Stdlib::IP::Address, Enum['0.0.0.0']] $local_ip,
+| -%>
 <% ['udp', 'tcp'].each|$proto| { -%>
 <remote>
   <connection>syslog</connection>
   <port>514</port>
   <protocol><%= $proto %></protocol>
-  <allowed-ips><%= $syslog_receiver_allowed_ips.join(',')  %></allowed-ips>
-  <local_ip><%= $syslog_receiver_local_ip %></local_ip>
+  <allowed-ips><%= $allowed_ips.join(',')  %></allowed-ips>
+  <local_ip><%= $local_ip %></local_ip>
 </remote>
 
 <% } -%>

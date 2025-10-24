@@ -435,7 +435,10 @@ class wazuh::manager (
     concat::fragment {
       'ossec.conf_syslog_receiver':
         target  => 'manager_ossec.conf',
-        content => epp("${module_name}/fragments/_syslog_receiver.epp"),
+        content => epp("${module_name}/fragments/_syslog_receiver.epp", {
+            'allowed_ips' => $syslog_receiver_allowed_ips,
+            'local_ip'    => $syslog_receiver_local_ip,
+        }),
     }
   }
 
