@@ -3,8 +3,7 @@
 # @param syslog_receiver
 #   Enabled syslog receiving on the host.
 # @param syslog_receiver_allowed_ips
-#   Allowed IPs for syslog. All by default. todo this param needs to be converted
-#   into an array
+#   Allowed IPs for syslog. All by default.
 # @param syslog_receiver_local_ip
 #   Ip to bind to. All interfaces by default.
 class wazuh::manager (
@@ -188,7 +187,7 @@ class wazuh::manager (
   Boolean $syslog_receiver                                                = false,
   # Array with join would be cleaner
   # multi entry with ,
-  String $syslog_receiver_allowed_ips                                     = '0.0.0.0/0',
+  Array[Stdlib::IP::Address::CIDR] $syslog_receiver_allowed_ips           = '0.0.0.0/0',
   Variant[Stdlib::IP::Address, Enum['0.0.0.0']] $syslog_receiver_local_ip = '0.0.0.0',
 
   # Authd configuration
@@ -436,7 +435,7 @@ class wazuh::manager (
     concat::fragment {
       'ossec.conf_syslog_receiver':
         target  => 'manager_ossec.conf',
-        content => template('wazuh/fragments/_syslog_receiver.erb');
+        content => epp("${module_name}/fragments/_syslog_receiver.epp"),
     }
   }
 

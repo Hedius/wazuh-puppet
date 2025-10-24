@@ -1,0 +1,10 @@
+<% ['udp', 'tcp'].each|$proto| { -%>
+<remote>
+  <connection>syslog</connection>
+  <port>514</port>
+  <protocol><%= $proto %></protocol>
+  <allowed-ips><%= $syslog_receiver_allowed_ips.join(',')  %></allowed-ips>
+  <local_ip><%= $syslog_receiver_local_ip %></local_ip>
+</remote>
+
+<% } -%>
