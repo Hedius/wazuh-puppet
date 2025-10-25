@@ -102,7 +102,6 @@ class wazuh::manager (
   $ossec_rootcheck_system_audit         = $wazuh::params_manager::ossec_rootcheck_system_audit,
 
   # SCA
-
   ## Amazon
   $sca_amazon_enabled = $wazuh::params_manager::sca_amazon_enabled,
   $sca_amazon_scan_on_start = $wazuh::params_manager::sca_amazon_scan_on_start,
@@ -656,7 +655,8 @@ class wazuh::manager (
       state  => [
         'NEW',
         'RELATED',
-      'ESTABLISHED'],
+        'ESTABLISHED',
+      ],
     }
   }
   if $ossec_cluster_enable_firewall == 'yes' {
@@ -668,7 +668,8 @@ class wazuh::manager (
       state  => [
         'NEW',
         'RELATED',
-      'ESTABLISHED'],
+        'ESTABLISHED',
+      ],
     }
   }
 

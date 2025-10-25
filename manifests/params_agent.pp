@@ -1,7 +1,7 @@
 # Copyright (C) 2015, Wazuh Inc.
 # Wazuh-Agent configuration parameters
 class wazuh::params_agent {
-  $agent_package_version = '4.13.1'
+  $agent_package_version = '4.14.0'
   $agent_package_revision = '1'
   $agent_service_ensure = 'running'
   $agent_msi_download_location = 'https://packages.wazuh.com/4.x/windows'
@@ -103,7 +103,6 @@ class wazuh::params_agent {
   $ossec_labels_template = 'wazuh/fragments/_labels.erb'
   $ossec_labels = []
 
-
   ## Rootcheck
   $ossec_rootcheck_disabled = 'no'
   $ossec_rootcheck_check_files = 'yes'
@@ -127,7 +126,6 @@ class wazuh::params_agent {
   $ossec_rootcheck_windows_disabled = 'no'
   $ossec_rootcheck_windows_windows_apps = './shared/win_applications_rcl.txt'
   $ossec_rootcheck_windows_windows_malware = './shared/win_malware_rcl.txt'
-
 
   # SCA
 
@@ -159,13 +157,11 @@ class wazuh::params_agent {
   $sca_else_skip_nfs = 'yes'
   $sca_else_policies = []
 
-
   ## open-scap
   $wodle_openscap_disabled = 'yes'
   $wodle_openscap_timeout = '1800'
   $wodle_openscap_interval = '1d'
   $wodle_openscap_scan_on_start = 'yes'
-
 
   ## syscheck
   $ossec_syscheck_disabled = 'no'
@@ -209,7 +205,6 @@ class wazuh::params_agent {
   $ossec_syscheck_nodiff = '/etc/ssl/private.key'
   $ossec_syscheck_skip_nfs = 'yes'
 
-
   # Audit
   $audit_manage_rules                = false
   $audit_buffer_bytes                = '8192'
@@ -217,14 +212,13 @@ class wazuh::params_agent {
   $audit_rules                       = [
     "-b ${audit_buffer_bytes}",
     "--backlog_wait_time ${audit_backlog_wait_time}",
-    '-f 1'
+    '-f 1',
   ]
 
   $windows_audit_interval = 300
 
   # active-response
   $active_response_linux_ca_store = '/var/ossec/etc/wpk_root.pem'
-
 
   # OS specific configurations
   case $facts['kernel'] {
@@ -292,7 +286,7 @@ class wazuh::params_agent {
       $ossec_ruleset_decoder_dir = 'ruleset/decoders'
       $ossec_ruleset_rule_dir = 'ruleset/rules'
       $ossec_ruleset_rule_exclude = '0215-policy_rules.xml'
-      $ossec_ruleset_list = [ 'etc/lists/audit-keys',
+      $ossec_ruleset_list = ['etc/lists/audit-keys',
         'etc/lists/amazon/aws-eventnames',
         'etc/lists/security-eventchannel',
         'etc/lists/malicious-ioc/malicious-ip',
@@ -322,8 +316,8 @@ class wazuh::params_agent {
                   'type'   => 'xccdf',
                   profiles => ['xccdf_org.ssgproject.content_profile_common'],
                 }, 'cve-ubuntu-xenial-oval.xml' => {
-                  'type' => 'oval'
-                }
+                  'type' => 'oval',
+                },
               }
             }
             'jessie': {
@@ -334,7 +328,7 @@ class wazuh::params_agent {
                 },
                 'cve-debian-8-oval.xml' => {
                   'type' => 'oval',
-                }
+                },
               }
             }
             /^(wheezy|stretch|buster|bullseye|bookworm|trixie|sid|precise|trusty|vivid|wily|xenial|bionic|focal|groovy|jammy)$/: {
@@ -346,7 +340,6 @@ class wazuh::params_agent {
               fail("Module ${module_name} is not supported on ${facts['os']['distro']['description']}")
             }
           }
-
         }
         'RedHat': {
           $service_has_status = true
@@ -363,7 +356,6 @@ class wazuh::params_agent {
               $ossec_service_provider = 'systemd'
             }
             'CentOS': {
-
               if ( $facts['os']['release']['full'] =~ /^6.*/ ) {
                 $ossec_service_provider = 'redhat'
 
@@ -373,8 +365,8 @@ class wazuh::params_agent {
                     profiles => [
                       'xccdf_org.ssgproject.content_profile_pci-dss',
                       'xccdf_org.ssgproject.content_profile_server',
-                    ]
-                  }
+                    ],
+                  },
                 }
               }
               if ( $facts['os']['release']['full'] =~ /^7.*/ ) {
@@ -386,8 +378,8 @@ class wazuh::params_agent {
                     profiles => [
                       'xccdf_org.ssgproject.content_profile_pci-dss',
                       'xccdf_org.ssgproject.content_profile_common',
-                    ]
-                  }
+                    ],
+                  },
                 }
               }
             }
@@ -401,11 +393,11 @@ class wazuh::params_agent {
                     profiles => [
                       'xccdf_org.ssgproject.content_profile_pci-dss',
                       'xccdf_org.ssgproject.content_profile_server',
-                    ]
+                    ],
                   },
                   'cve-redhat-6-ds.xml' => {
                     'type' => 'xccdf',
-                  }
+                  },
                 }
               }
               if ( $facts['os']['release']['full'] =~ /^7.*/ ) {
@@ -417,11 +409,11 @@ class wazuh::params_agent {
                     profiles => [
                       'xccdf_org.ssgproject.content_profile_pci-dss',
                       'xccdf_org.ssgproject.content_profile_common',
-                    ]
+                    ],
                   },
                   'cve-redhat-7-ds.xml' => {
                     'type' => 'xccdf',
-                  }
+                  },
                 }
               }
               if ( $facts['os']['release']['full'] =~ /^8.*/ ) {
@@ -433,11 +425,11 @@ class wazuh::params_agent {
                     profiles => [
                       'xccdf_org.ssgproject.content_profile_pci-dss',
                       'xccdf_org.ssgproject.content_profile_common',
-                    ]
+                    ],
                   },
                   'cve-redhat-8-ds.xml' => {
                     'type' => 'xccdf',
-                  }
+                  },
                 }
               }
             }
@@ -451,7 +443,7 @@ class wazuh::params_agent {
                     profiles => [
                       'xccdf_org.ssgproject.content_profile_standard',
                       'xccdf_org.ssgproject.content_profile_common',
-                    ]
+                    ],
                   },
                 }
               }

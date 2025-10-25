@@ -9,7 +9,7 @@
 class wazuh::dashboard (
   $dashboard_package = 'wazuh-dashboard',
   $dashboard_service = 'wazuh-dashboard',
-  $dashboard_version = '4.13.1',
+  $dashboard_version = '4.14.0',
   $indexer_server_ip = 'localhost',
   Stdlib::Port $indexer_server_port = 9200,
   $manager_api_host = '127.0.0.1',

@@ -56,7 +56,6 @@ class wazuh::agent (
   $ossec_labels_template                = $wazuh::params_agent::ossec_labels_template,
 
   # Server configuration
-
   $wazuh_register_endpoint           = $wazuh::params_agent::wazuh_register_endpoint,
   $wazuh_reporting_endpoint          = $wazuh::params_agent::wazuh_reporting_endpoint,
   $ossec_port                        = $wazuh::params_agent::ossec_port,
@@ -74,7 +73,6 @@ class wazuh::agent (
   $client_buffer_events_per_second   = $wazuh::params_agent::client_buffer_events_per_second,
 
   # Auto enrollment configuration
-
   $wazuh_enrollment_enabled          = $wazuh::params_agent::wazuh_enrollment_enabled,
   $wazuh_enrollment_manager_address  = $wazuh::params_agent::wazuh_enrollment_manager_address,
   $wazuh_enrollment_port             = $wazuh::params_agent::wazuh_enrollment_port,
@@ -90,7 +88,6 @@ class wazuh::agent (
   $wazuh_enrollment_auto_method      = $wazuh::params_agent::wazuh_enrollment_auto_method,
   $wazuh_delay_after_enrollment      = $wazuh::params_agent::wazuh_delay_after_enrollment,
   $wazuh_enrollment_use_source_ip    = $wazuh::params_agent::wazuh_enrollment_use_source_ip,
-
 
   # Rootcheck
   $ossec_rootcheck_disabled           = $wazuh::params_agent::ossec_rootcheck_disabled,
@@ -108,7 +105,6 @@ class wazuh::agent (
   $ossec_rootcheck_rootkit_trojans    = $wazuh::params_agent::ossec_rootcheck_rootkit_trojans,
   $ossec_rootcheck_skip_nfs           = $wazuh::params_agent::ossec_rootcheck_skip_nfs,
   $ossec_rootcheck_system_audit      = $wazuh::params_agent::ossec_rootcheck_system_audit,
-
 
   # rootcheck windows
   $ossec_rootcheck_windows_disabled        = $wazuh::params_agent::ossec_rootcheck_windows_disabled,
@@ -231,7 +227,6 @@ class wazuh::agent (
   $ossec_labels                      = $wazuh::params_agent::ossec_labels,
 
   ## Selinux
-
   $selinux                           = $wazuh::params_agent::selinux,
   $manage_firewall                   = $wazuh::params_agent::manage_firewall,
 
@@ -242,13 +237,6 @@ class wazuh::agent (
   # Logging
   $logging_log_format                = $wazuh::params_agent::logging_log_format,
 ) inherits wazuh::params_agent {
-  # validate_bool(
-  #   $ossec_active_response, $ossec_rootcheck,
-  #   $selinux,
-  # )
-  # This allows arrays of integers, sadly
-  # (commented due to stdlib version requirement)
-
   if (( $ossec_syscheck_whodata_directories_1 == 'yes' ) or ( $ossec_syscheck_whodata_directories_2 == 'yes' )) {
     class { 'wazuh::audit':
       audit_manage_rules      => $audit_manage_rules,
@@ -257,7 +245,6 @@ class wazuh::agent (
       audit_rules             => $audit_rules,
     }
   }
-
 
   if $manage_client_keys == 'yes' {
     if $wazuh_register_endpoint == undef {
@@ -308,44 +295,43 @@ class wazuh::agent (
   }
 
   case $facts['kernel'] {
-  'Linux': {
-    ## ossec.conf generation concats
-    case $facts['os']['name'] {
-      'RedHat', 'OracleLinux', 'Suse':{
-        $apply_template_os = 'rhel'
-        if ( $facts['os']['release']['full'] =~ /^9.*/ ){
-          $rhel_version = '9'
-        }elsif ( $facts['os']['release']['full'] =~ /^8.*/ ){
-          $rhel_version = '8'
-        }elsif ( $facts['os']['release']['full'] =~ /^7.*/ ){
-          $rhel_version = '7'
-        }elsif ( $facts['os']['release']['full'] =~ /^6.*/ ){
-          $rhel_version = '6'
-        }elsif ( $facts['os']['release']['full'] =~ /^5.*/ ){
-          $rhel_version = '5'
-        }else{
-          fail('This ossec module has not been tested on your distribution')
+    'Linux': {
+      ## ossec.conf generation concats
+      case $facts['os']['name'] {
+        'RedHat', 'OracleLinux', 'Suse':{
+          $apply_template_os = 'rhel'
+          if ( $facts['os']['release']['full'] =~ /^9.*/ ) {
+            $rhel_version = '9'
+          } elsif ( $facts['os']['release']['full'] =~ /^8.*/ ) {
+            $rhel_version = '8'
+          } elsif ( $facts['os']['release']['full'] =~ /^7.*/ ) {
+            $rhel_version = '7'
+          } elsif ( $facts['os']['release']['full'] =~ /^6.*/ ) {
+            $rhel_version = '6'
+          } elsif ( $facts['os']['release']['full'] =~ /^5.*/ ) {
+            $rhel_version = '5'
+          } else {
+            fail('This ossec module has not been tested on your distribution')
+          }
+        } 'Debian', 'debian', 'Ubuntu', 'ubuntu':{
+          $apply_template_os = 'debian'
+          if ( $facts['os']['distro']['codename'] == 'wheezy') or ($facts['os']['distro']['codename'] == 'jessie') {
+            $debian_additional_templates = 'yes'
+          }
+        } 'Amazon':{
+          $apply_template_os = 'amazon'
+        } 'CentOS','Centos','centos','AlmaLinux','Rocky':{
+          $apply_template_os = 'centos'
+        } 'SLES':{
+          $apply_template_os = 'suse'
         }
-      }'Debian', 'debian', 'Ubuntu', 'ubuntu':{
-        $apply_template_os = 'debian'
-        if ( $facts['os']['distro']['codename'] == 'wheezy') or ($facts['os']['distro']['codename'] == 'jessie'){
-          $debian_additional_templates = 'yes'
-        }
-      }'Amazon':{
-        $apply_template_os = 'amazon'
-      }'CentOS','Centos','centos','AlmaLinux','Rocky':{
-        $apply_template_os = 'centos'
-      }'SLES':{
-        $apply_template_os = 'suse'
+        default: { fail('OS not supported') }
       }
-      default: { fail('OS not supported') }
-    }
-  }'windows': {
+    } 'windows': {
       $apply_template_os = 'windows'
     }
     default: { fail('OS not supported') }
   }
-
 
   concat { 'agent_ossec.conf':
     path    => $wazuh::params_agent::config_file,
@@ -360,7 +346,7 @@ class wazuh::agent (
   concat::fragment {
     'ossec.conf_header':
       target  => 'agent_ossec.conf',
-      order   => 00,
+      order   => '00',
       before  => Service[$agent_service_name],
       content => "<ossec_config>\n";
     'ossec.conf_agent':
@@ -453,19 +439,19 @@ class wazuh::agent (
   }
   if ($configure_active_response == true) {
     wazuh::activeresponse { 'active-response configuration':
-      active_response_disabled           =>  $ossec_active_response_disabled,
-      active_response_linux_ca_store     =>  $ossec_active_response_linux_ca_store,
-      active_response_ca_verification    =>  $ossec_active_response_ca_verification,
-      active_response_repeated_offenders =>  $ossec_active_response_repeated_offenders,
+      active_response_disabled           => $ossec_active_response_disabled,
+      active_response_linux_ca_store     => $ossec_active_response_linux_ca_store,
+      active_response_ca_verification    => $ossec_active_response_ca_verification,
+      active_response_repeated_offenders => $ossec_active_response_repeated_offenders,
       order_arg                          => 40,
       before_arg                         => Service[$agent_service_name],
-      target_arg                         => 'agent_ossec.conf'
+      target_arg                         => 'agent_ossec.conf',
     }
   }
 
-  if ($configure_labels == true){
+  if ($configure_labels == true) {
     concat::fragment {
-        'ossec.conf_labels':
+      'ossec.conf_labels':
         target  => 'agent_ossec.conf',
         order   => 45,
         before  => Service[$agent_service_name],
@@ -564,7 +550,7 @@ class wazuh::agent (
         exec { 'agent-auth-linux':
           path    => ['/usr/bin', '/bin', '/usr/sbin', '/sbin'],
           command => $agent_auth_command,
-          unless  => "egrep -q '.' ${::wazuh::params_agent::keys_file}",
+          unless  => "egrep -q '.' ${wazuh::params_agent::keys_file}",
           require => Concat['agent_ossec.conf'],
           before  => Service[$agent_service_name],
           notify  => Service[$agent_service_name],
@@ -653,5 +639,4 @@ class wazuh::agent (
       require => Package[$wazuh::params_agent::agent_package_name],
     }
   }
-
 }

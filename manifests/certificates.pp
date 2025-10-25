@@ -2,7 +2,7 @@
 # Wazuh repository installation
 class wazuh::certificates (
   $wazuh_repository = 'packages.wazuh.com',
-  $wazuh_version = '4.13',
+  $wazuh_version = '4.14',
   $indexer_certs = [],
   $manager_certs = [],
   $manager_master_certs = [],
@@ -29,6 +29,7 @@ class wazuh::certificates (
 
   # todo hedius
   # Refactor this:
+  # this is in my internal module fully solved over puppetdb. todo... make this public?
   # 1. Gen the crt on our "main wazuh" node. Export the crts to the cluster.
   # exec { 'Create Wazuh Certificates':
   #   path    => '/usr/bin:/bin',

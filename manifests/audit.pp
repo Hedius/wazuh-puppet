@@ -7,7 +7,6 @@ class wazuh::audit (
   $audit_rules = [],
   $audit_package_title = 'Installing Audit..',
 ) {
-
   case $facts['kernel'] {
     'Linux': {
       case $facts['os']['name'] {
@@ -18,7 +17,7 @@ class wazuh::audit (
         }
         default: {
           package { $audit_package_title:
-            name => 'audit'
+            name => 'audit',
           }
         }
       }
@@ -31,7 +30,7 @@ class wazuh::audit (
 
       if $audit_manage_rules == true {
         file { '/etc/audit/rules.d/audit.rules':
-          ensure  => present,
+          ensure  => file,
           require => Service['auditd'],
         }
 
@@ -39,13 +38,13 @@ class wazuh::audit (
           file_line { "Append rule ${rule} to /etc/audit/rules.d/audit.rules":
             path    => '/etc/audit/rules.d/audit.rules',
             line    => $rule,
-            require => File['/etc/audit/rules.d/audit.rules']
+            require => File['/etc/audit/rules.d/audit.rules'],
           }
         }
       }
     }
     default: {
-      fail("Module Audit not supported on ${::operatingsystem}")
+      fail("Module Audit not supported on ${facts['os']['name']}")
     }
   }
 }

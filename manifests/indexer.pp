@@ -8,7 +8,7 @@ class wazuh::indexer (
   $indexer_node_max_local_storage_nodes = '1',
   $indexer_service = 'wazuh-indexer',
   $indexer_package = 'wazuh-indexer',
-  $indexer_version = '4.13.1',
+  $indexer_version = '4.14.0',
   $indexer_fileuser = 'wazuh-indexer',
   $indexer_filegroup = 'wazuh-indexer',
 
@@ -137,21 +137,6 @@ class wazuh::indexer (
     line   => "${indexer_fileuser} - memlock unlimited",
     match  => "^${indexer_fileuser} - memlock\s",
     notify => Service['wazuh-indexer'],
-  }
-
-  # TODO: this should be done by the package itself and not by puppet at all
-  [
-    '/etc/wazuh-indexer',
-    '/usr/share/wazuh-indexer',
-    '/var/lib/wazuh-indexer',
-  ].each |String $file| {
-    exec { "set recusive ownership of ${file}":
-      path        => '/usr/bin:/bin',
-      command     => "chown ${indexer_fileuser}:${indexer_filegroup} -R ${file}",
-      refreshonly => true,  # only run when package is installed or updated
-      subscribe   => Package['wazuh-indexer'],
-      notify      => Service['wazuh-indexer'],
-    }
   }
 
   if $full_indexer_reinstall {

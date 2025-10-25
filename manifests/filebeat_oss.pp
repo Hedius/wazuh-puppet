@@ -17,7 +17,7 @@
 #   Name of the user to use for authenticating against the wazuh-indexer.
 # @param elastic_password
 #   Password of that user.
-# @param filebeat_oss_version
+# @param version
 #   Filebeat version to install.
 # @param wazuh_app_version
 #   Unused at the moment.
@@ -47,11 +47,10 @@ class wazuh::filebeat_oss (
   String $service = 'filebeat',
   String $elastic_user = 'admin',
   String $elastic_password = 'admin',
-  # Not touching those to avoid merge conflicts for now
-  $filebeat_oss_version = '7.10.2-1',
-  $wazuh_app_version = '4.13.1_7.10.2',
-  $wazuh_extensions_version = 'v4.13.1',
-  $wazuh_filebeat_module = 'wazuh-filebeat-0.4.tar.gz',
+  String $version = '7.10.2',
+  String $wazuh_app_version = '4.14.0_7.10.2',
+  String $wazuh_extensions_version = 'v4.14.0',
+  String $wazuh_filebeat_module = 'wazuh-filebeat-0.4.tar.gz',
   String $wazuh_node_name = $trusted['hostname'],
 
   String $filebeat_fileuser = 'root',
@@ -59,19 +58,11 @@ class wazuh::filebeat_oss (
   String $filebeat_path_certs = '/etc/filebeat/certs',
 
   Stdlib::Absolutepath $cert_dir = '/etc/wazuh-certs',
-
   String $template_repo = 'https://raw.githubusercontent.com/wazuh/wazuh',
   String $module_repo = 'https://packages.wazuh.com/4.x/filebeat',
 ) {
-  if $facts['os']['family'] == 'Debian' {
-    apt::pin { 'filebeat':
-      packages => $package,
-      priority => 1001,
-      version  => $filebeat_oss_version,
-    }
-  }
-  package { $package:
-    ensure => $filebeat_oss_version,
+  package { 'filebeat':
+    ensure => $version,
   }
 
   # Todo versionlock for rhel
@@ -187,7 +178,6 @@ class wazuh::filebeat_oss (
       mode      => '0400',
       replace   => true,
       recurse   => remote,
-      # todo same cert fallback... replace with exported resource
       source    => "${cert_dir}/${certfile_source}",
       show_diff => false,
       notify    => Service['filebeat'],

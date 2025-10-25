@@ -4,7 +4,7 @@ class wazuh::params_manager {
   case $facts['kernel'] {
     'Linux': {
       # Installation
-      $server_package_version                          = '4.13.1'
+      $server_package_version                          = '4.14.0'
 
       $manage_firewall                                 = false
 
@@ -70,7 +70,6 @@ class wazuh::params_manager {
       $ossec_syslog_output_template                    = 'wazuh/fragments/_syslog_output.erb'
 
       ## Rootcheck
-
       $ossec_rootcheck_disabled                        = 'no'
       $ossec_rootcheck_check_files                     = 'yes'
       $ossec_rootcheck_check_trojans                   = 'yes'
@@ -311,7 +310,6 @@ class wazuh::params_manager {
 
       $wazuh_api_host = '0.0.0.0'
       $wazuh_api_port = '55000'
-
       $wazuh_api_file =  undef
 
       # Advanced configuration
@@ -357,7 +355,7 @@ class wazuh::params_manager {
       # Wazuh API template path
       $wazuh_api_template = 'wazuh/wazuh_api_yml.erb'
 
-      case $facts['os']['name'] {
+      case $facts['os']['family'] {
         'Debian': {
           $agent_service  = 'wazuh-agent'
           $agent_package  = 'wazuh-agent'
@@ -403,7 +401,7 @@ class wazuh::params_manager {
               $wodle_openscap_content = undef
             }
             default: {
-              fail("Module ${module_name} is not supported on ${facts['os']['distro']['description']}")
+              fail("Module ${module_name} is not supported on ${facts['os']['name']}")
             }
           }
         }
@@ -480,6 +478,32 @@ class wazuh::params_manager {
                   },
                 }
               }
+              if ( $facts['os']['release']['full'] =~ /^8.*/ ) {
+                $ossec_service_provider = 'systemd'
+                $api_service_provider = 'systemd'
+                $wodle_openscap_content = {
+                  'ssg-rhel-8-ds.xml' => {
+                    'type' => 'xccdf',
+                    profiles => ['xccdf_org.ssgproject.content_profile_pci-dss', 'xccdf_org.ssgproject.content_profile_common',],
+                  },
+                  'cve-redhat-8-ds.xml' => {
+                    'type' => 'xccdf',
+                  },
+                }
+              }
+              if ( $facts['os']['release']['full'] =~ /^9.*/ ) {
+                $ossec_service_provider = 'systemd'
+                $api_service_provider = 'systemd'
+                $wodle_openscap_content = {
+                  'ssg-rhel-9-ds.xml' => {
+                    'type' => 'xccdf',
+                    profiles => ['xccdf_org.ssgproject.content_profile_pci-dss', 'xccdf_org.ssgproject.content_profile_common',],
+                  },
+                  'cve-redhat-9-ds.xml' => {
+                    'type' => 'xccdf',
+                  },
+                }
+              }
             }
             'Fedora': {
               if ( $facts['os']['release']['full'] =~ /^(23|24|25).*/ ) {
@@ -543,7 +567,7 @@ class wazuh::params_manager {
       $keys_group = 'Administrators'
 
       $agent_service  = 'WazuhSvc'
-      $agent_package  = 'Wazuh Agent 4.13.1'
+      $agent_package  = 'Wazuh Agent 4.14.0'
       $server_service = ''
       $server_package = ''
       $api_service = ''
