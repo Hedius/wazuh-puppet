@@ -266,10 +266,18 @@ class wazuh::agent (
   }
 
   # Package installation
+  $agent_version = "${agent_package_version}-${agent_package_revision}"
+  if $facts['os']['family'] == 'Debian' {
+    apt::pin { 'wazuh-agent':
+      packages => $agent_package_name,
+      priority => 1001,
+      version  => $agent_version,
+    }
+  }
   case $facts['kernel'] {
     'Linux': {
       package { $agent_package_name:
-        ensure => "${agent_package_version}-${agent_package_revision}", # lint:ignore:security_package_pinned_version
+        ensure => $agent_version, # lint:ignore:security_package_pinned_version
       }
       # todo pin package
     }

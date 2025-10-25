@@ -51,6 +51,14 @@ class wazuh::dashboard (
     }
   }
 
+  if $facts['os']['family'] == 'Debian' {
+    apt::pin { 'wazuh-dashboard':
+      packages => $dashboard_package,
+      priority => 1001,
+      version  => $dashboard_version_install,
+    }
+  }
+
   # install package
   package { 'wazuh-dashboard':
     ensure => $dashboard_version_install,

@@ -35,7 +35,7 @@ class wazuh::indexer (
   case $facts['os']['family'] {
     'Debian': {
       # todo check this
-      $indexer_version_install = "${indexer_version}-1"
+      $indexer_version_install = "${indexer_version}-*"
     }
     'Linux', 'RedHat', default: {
       $indexer_version_install = $indexer_version

@@ -359,6 +359,14 @@ class wazuh::manager (
 
   # Install and configure Wazuh-manager package
 
+  if $facts['os']['family'] == 'Debian' {
+    apt::pin { 'wazuh-manager':
+      packages => $wazuh::params_manager::server_package,
+      priority => 1001,
+      version  => $server_version_install,
+    }
+  }
+
   package { $wazuh::params_manager::server_package:
     ensure  => $server_version_install, # lint:ignore:security_package_pinned_version
   }
