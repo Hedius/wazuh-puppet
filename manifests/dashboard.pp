@@ -86,6 +86,7 @@ class wazuh::dashboard (
       recurse   => remote,
       source    => "${cert_dir}/${certsource}.pem",
       show_diff => false,
+      notify    => Service['wazuh-dashboard'],
     }
   }
 
