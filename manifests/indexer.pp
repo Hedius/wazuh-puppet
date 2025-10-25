@@ -88,6 +88,7 @@ class wazuh::indexer (
       recurse   => remote,
       # todo - same crt workaround
       source    => "${cert_dir}/${certsource}.pem",
+      notify    => Service['wazuh-indexer'],
       show_diff => false,
     }
   }

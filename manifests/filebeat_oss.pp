@@ -190,6 +190,7 @@ class wazuh::filebeat_oss (
       # todo same cert fallback... replace with exported resource
       source    => "${cert_dir}/${certfile_source}",
       show_diff => false,
+      notify    => Service['filebeat'],
     }
   }
 
