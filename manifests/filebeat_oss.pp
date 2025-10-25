@@ -52,7 +52,7 @@ class wazuh::filebeat_oss (
   $wazuh_app_version = '4.13.1_7.10.2',
   $wazuh_extensions_version = 'v4.13.1',
   $wazuh_filebeat_module = 'wazuh-filebeat-0.4.tar.gz',
-  String $wazuh_node_name = 'master',
+  String $wazuh_node_name = $trusted['hostname'],
 
   String $filebeat_fileuser = 'root',
   String $filebeat_filegroup = 'root',
