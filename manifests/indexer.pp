@@ -35,7 +35,7 @@ class wazuh::indexer (
     $_jvm_options_memory = $jvm_options_memory
   } else {
     # cap at 32GB, else 50% of RAM
-    $mem = [32 * 1024, $facts['memory']['system']['total_bytes'] / 1024 / 1024 / 2].sort.floor[0]
+    $mem = [32 * 1024, $facts['memory']['system']['total_bytes'] / 1024 / 1024 / 2].sort[0].floor
     $_jvm_options_memory = "${mem}M"
   }
 
