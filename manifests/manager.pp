@@ -330,8 +330,9 @@ class wazuh::manager (
       }
     }
     service { 'auditd':
-      ensure => running,
-      enable => true,
+      ensure   => running,
+      enable   => true,
+      provider => 'systemd',
     }
   }
 
@@ -415,6 +416,17 @@ class wazuh::manager (
     }
     'CentOS','Centos','centos':{
       $apply_template_os = 'centos'
+    } 'Rocky':{
+      $apply_template_os = 'rhel'
+      if ( $facts['os']['release']['full'] =~ /^10.*/ ) {
+        $rhel_version = '10'
+      }
+      elsif ( $facts['os']['release']['full'] =~ /^9.*/ ) {
+        $rhel_version = '9'
+      }
+      elsif ( $facts['os']['release']['full'] =~ /^8.*/ ) {
+        $rhel_version = '8'
+      }
     }
     default: { fail('This ossec module has not been tested on your distribution') }
   }

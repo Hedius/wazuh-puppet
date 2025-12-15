@@ -48,8 +48,8 @@ class wazuh::filebeat_oss (
   String $elastic_user = 'admin',
   String $elastic_password = 'admin',
   String $version = '7.10.2',
-  String $wazuh_app_version = '4.14.0_7.10.2',
-  String $wazuh_extensions_version = 'v4.14.0',
+  String $wazuh_app_version = '4.14.1_7.10.2',
+  String $wazuh_extensions_version = 'v4.14.1',
   String $wazuh_filebeat_module = 'wazuh-filebeat-0.4.tar.gz',
   String $wazuh_node_name = $trusted['hostname'],
 
