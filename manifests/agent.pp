@@ -253,13 +253,18 @@ class wazuh::agent (
   }
 
   # Package installation
-  $agent_version = "${agent_package_version}-${agent_package_revision}"
+  if $facts['os']['family'] == 'RedHat' {
+    $agent_version = $agent_package_version
+  } else {
+    $agent_version = "${agent_package_version}-${agent_package_revision}"
+  }
   if $facts['os']['family'] == 'Debian' {
     apt::pin { 'wazuh-agent':
       packages => $agent_package_name,
       priority => 1001,
       version  => $agent_version,
     }
+    $agent_version = "${agent_package_version}-${agent_package_revision}"
   }
   case $facts['kernel'] {
     'Linux': {
