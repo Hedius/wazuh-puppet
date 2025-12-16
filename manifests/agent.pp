@@ -264,7 +264,6 @@ class wazuh::agent (
       priority => 1001,
       version  => $agent_version,
     }
-    $agent_version = "${agent_package_version}-${agent_package_revision}"
   }
   case $facts['kernel'] {
     'Linux': {
