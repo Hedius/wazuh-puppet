@@ -289,8 +289,7 @@ class wazuh::agent (
       # We do this with chocolatey. Choco hmmm :)
       package { $agent_package_name:
         ensure          => $agent_package_version,
-        # provider        => 'windows',
-        # source          => "${download_path}\\wazuh-agent-${agent_package_version}-${agent_package_revision}.msi",
+        provider        => 'chocolatey',
         install_options => [
           "--params='/Manager:${wazuh_reporting_endpoint} /Protocol=${ossec_protocol} /AgentName=${trusted['hostname']}'"
         ],
