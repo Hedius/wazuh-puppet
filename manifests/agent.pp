@@ -288,11 +288,11 @@ class wazuh::agent (
 
       # We do this with chocolatey. Choco hmmm :)
       package { $agent_package_name:
-        ensure          => $agent_package_version,
-        provider        => 'chocolatey',
-        install_options => [
-          "--params='/Manager:${wazuh_reporting_endpoint} /Protocol:${ossec_protocol} /AgentName:${trusted['hostname']}'"
-        ],
+        ensure   => $agent_package_version,
+        provider => 'chocolatey',
+        # install_options => [
+        #   "--params=\"'/Manager:${wazuh_reporting_endpoint} /Protocol:${ossec_protocol} /AgentName:${trusted['hostname']}'"
+        # ],
       }
     }
     default: { fail('OS not supported') }
