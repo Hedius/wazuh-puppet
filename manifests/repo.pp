@@ -56,11 +56,11 @@ class wazuh::repo (
           }
           # Manage the APT source list file content using concat
           concat { '/etc/apt/sources.list.d/wazuh.list':
-            ensure  => present,
-            owner   => 'root',
-            group   => 'root',
-            mode    => '0644',
-            notify  => Exec['apt-update'],
+            ensure => present,
+            owner  => 'root',
+            group  => 'root',
+            mode   => '0644',
+            notify => Exec['apt-update'],
           }
 
           concat::fragment { 'wazuh-source':
@@ -118,7 +118,9 @@ class wazuh::repo (
             baseurl       => $baseurl,
           }
         }
+        default: { fail('This ossec module has not been tested on your Operating System)') }
       }
     }
+    default: { fail('This ossec module has not been tested on your Operating System)') }
   }
 }

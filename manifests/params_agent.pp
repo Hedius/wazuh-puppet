@@ -1,7 +1,7 @@
 # Copyright (C) 2015, Wazuh Inc.
 # Wazuh-Agent configuration parameters
 class wazuh::params_agent {
-  $agent_package_version = '4.14.1'
+  $agent_package_version = '4.14.2'
   $agent_package_revision = '1'
   $agent_service_ensure = 'running'
   $agent_msi_download_location = 'https://packages.wazuh.com/4.x/windows'
@@ -428,6 +428,38 @@ class wazuh::params_agent {
                     ],
                   },
                   'cve-redhat-8-ds.xml' => {
+                    'type' => 'xccdf',
+                  },
+                }
+              }
+              if ( $facts['os']['release']['full'] =~ /^9.*/ ) {
+                $ossec_service_provider = 'systemd'
+
+                $wodle_openscap_content = {
+                  'ssg-rhel-9-ds.xml'   => {
+                    'type'   => 'xccdf',
+                    profiles => [
+                      'xccdf_org.ssgproject.content_profile_pci-dss',
+                      'xccdf_org.ssgproject.content_profile_common',
+                    ],
+                  },
+                  'cve-redhat-9-ds.xml' => {
+                    'type' => 'xccdf',
+                  },
+                }
+              }
+              if ( $facts['os']['release']['full'] =~ /^10.*/ ) {
+                $ossec_service_provider = 'systemd'
+
+                $wodle_openscap_content = {
+                  'ssg-rhel-10-ds.xml'   => {
+                    'type'   => 'xccdf',
+                    profiles => [
+                      'xccdf_org.ssgproject.content_profile_pci-dss',
+                      'xccdf_org.ssgproject.content_profile_common',
+                    ],
+                  },
+                  'cve-redhat-10-ds.xml' => {
                     'type' => 'xccdf',
                   },
                 }
