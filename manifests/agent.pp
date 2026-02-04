@@ -291,7 +291,7 @@ class wazuh::agent (
         ensure          => $agent_package_version,
         provider        => 'chocolatey',
         install_options => [
-          "--params='/Manager:${wazuh_reporting_endpoint} /Protocol=${ossec_protocol} /AgentName=${trusted['hostname']}'"
+          "--params='/Manager:${wazuh_reporting_endpoint} /Protocol:${ossec_protocol} /AgentName:${trusted['hostname']}'"
         ],
       }
     }
