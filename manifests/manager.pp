@@ -381,10 +381,10 @@ class wazuh::manager (
     $wazuh::params_manager::shared_agent_config_file:
       validate_cmd => $wazuh::params_manager::validate_cmd_conf,
       content      => template($shared_agent_template);
-    '/var/ossec/etc/rules/local_rules.xml':
-      content      => template($local_rules_template);
-    '/var/ossec/etc/decoders/local_decoder.xml':
-      content      => template($local_decoder_template);
+    # '/var/ossec/etc/rules/local_rules.xml':
+    #   content      => template($local_rules_template);
+    # '/var/ossec/etc/decoders/local_decoder.xml':
+    #   content      => template($local_decoder_template);
     $wazuh::params_manager::processlist_file:
       content      => template('wazuh/process_list.erb');
   }
