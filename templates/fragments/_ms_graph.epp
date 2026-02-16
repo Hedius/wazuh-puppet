@@ -30,7 +30,7 @@
 <% } -%>
 <% $resources.each|$name, $relationships| { -%>
     <resource>
-      <name><= $name %></name>
+      <name><%= $name %></name>
       <%- $relationships.each|$relationship| { -%>
       <relationship><%= $relationship %></relationship>
       <% } -%>
