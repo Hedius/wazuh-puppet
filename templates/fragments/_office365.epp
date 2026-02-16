@@ -1,0 +1,40 @@
+<%- |
+  Hash[String, Struct[{
+    client_id => String,
+    tenant_id => String,
+    client_secret => String,
+  }]] $tenants,
+  Array[String] $subscriptions = [
+    'Audit.SharePoint',
+    'Audit.AzureActiveDirectory',
+    'Audit.General',
+    'Audit.AzureActiveDirectory',
+    'Audit.Exchange',
+    'Audit.General',
+    'DLP.ALL'
+  ],
+  Enum['yes', 'no'] $enabled = 'yes',
+  String $interval = '1m',
+  Enum['yes', 'no'] $only_future_events = 'yes',
+| -%>
+  <office365>
+    <enabled><%= $enabled %></enabled>
+    <interval><%= $interval %></interval>
+    <curl_max_size>1M</curl_max_size>
+    <only_future_events><%= $only_future_events %></only_future_events>
+<% $tenants.each|$name, $cfg| { -%>
+    <!-- <%= $name %> -->
+    <api_auth>
+      <client_id><%= $cfg['client_id'] %></client_id>
+      <tenant_id><%= $cfg['tenant_id'] %></tenant_id>
+      <client_secret><%= Sensitive($cfg['client_secret']) %></client_secret>
+      <!-- hardcoded atm -->
+      <api_type>commercial</api_type>
+    </api_auth>
+<% } -%>
+    <subscriptions>
+<% $subscriptions.each|$sub| { -%>
+      <subscription><%= $sub %></subscription>
+<% } -%>
+    </subscriptions>
+  </office365>

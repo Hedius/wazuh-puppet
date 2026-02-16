@@ -1,0 +1,39 @@
+<%- |
+  Hash[String, Struct[{
+    client_id => String,
+    tenant_id => String,
+    secret_value => String,
+  }]] $tenants,
+  Hash[String, Array] $resources = {
+    'security' => ['alerts_v2', 'incidents'],
+    'deviceManagement' => ['auditEvents'],
+  },
+  Enum['yes', 'no'] $enabled = 'yes',
+  String $interval = '5m',
+  Enum['yes', 'no'] $only_future_events = 'yes',
+| -%>
+  <ms-graph>
+    <enabled><%= $enabled %></enabled>
+    <only_future_events><%= $only_future_events %></only_future_events>
+    <curl_max_size>10M</curl_max_size>
+    <interval><%= $interval %></interval>
+    <version>v1.0</version>
+<% $tenants.each|$name, $cfg| { -%>
+    <!-- <%= $name %> -->
+    <api_auth>
+      <client_id><%= $cfg['client_id'] %></client_id>
+      <tenant_id><%= $cfg['tenant_id'] %></tenant_id>
+      <secret_value><%= Sensitive($cfg['secret_value']) %></secret_value>
+      <!-- hardcoded atm -->
+      <api_type>global</api_type>
+    </api_auth>
+<% } -%>
+<% $resources.each|$name, $relationships| { -%>
+    <resource>
+      <name><= $name %></name>
+      <%- $relationships.each|$relationship| { -%>
+      <relationship><%= $relationship %></relationship>
+      <% } -%>
+    </resource>
+<% } -%>
+  </ms-graph>

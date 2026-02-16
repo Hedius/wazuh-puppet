@@ -6,6 +6,12 @@
 #   Allowed IPs for syslog. All by default.
 # @param syslog_receiver_local_ip
 #   Ip to bind to. All interfaces by default.
+# @param office365
+#   Optional config block for office 365 fragment / epp.
+#   Array of wazuh::Office365 Struct.
+# @param ms_graph
+#   Optional config block for 
+#   Array of wazuh::MS_Graph Struct.
 class wazuh::manager (
   # Installation
 
@@ -302,6 +308,10 @@ class wazuh::manager (
   $limits_eps                               = $wazuh::params_manager::limits_eps,
 
   $wazuh_api_template                       = $wazuh::params_manager::wazuh_api_template,
+
+  # O365 / MS_Graph
+  Hash[String, Wazuh::Office365] $office365 = {},
+  Hash[String, Wazuh::MS_Graph] $ms_graph = {},
 ) inherits wazuh::params_manager {
   ## Determine which kernel and family puppet is running on. Will be used on _localfile, _rootcheck, _syscheck & _sca
 
@@ -590,6 +600,21 @@ class wazuh::manager (
         content => template($ossec_cluster_template);
     }
   }
+
+  $office365.each|$id, $cfg| {
+    concat::fragment { "ossec.conf_office365_${id}":
+      target  => 'manager_ossec.conf',
+      content => epp("${module_name}/fragments/_office365.epp", $cfg),
+    }
+  }
+
+  $ms_graph.each|$id, $cfg| {
+    concat::fragment { "ossec.conf_ms_graph_${id}":
+      target  => 'manager_ossec.conf',
+      content => epp("${module_name}/fragments/_ms_graph.epp", $cfg),
+    }
+  }
+
   if ($configure_active_response == true) {
     wazuh::activeresponse { 'active-response configuration':
       active_response_command            => $ossec_active_response_command,
