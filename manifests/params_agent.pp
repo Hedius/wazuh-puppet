@@ -99,9 +99,8 @@ class wazuh::params_agent {
   # Other required to define variables
   $manage_firewall = false
   $selinux = false
-  $configure_labels = false
-  $ossec_labels_template = 'wazuh/fragments/_labels.erb'
-  $ossec_labels = []
+  $ossec_labels_template = 'wazuh/fragments/_labels.epp'
+  $ossec_labels = {}
 
   ## Rootcheck
   $ossec_rootcheck_disabled = 'no'

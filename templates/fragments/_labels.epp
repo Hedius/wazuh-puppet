@@ -1,0 +1,11 @@
+<%- |
+  Hash[String, Variant[String, Struct[{hidden => Optional[Enum['yes', 'no']], value => String}]]] $labels,
+| -%>
+  <labels>
+<%- $labels.each|$key, $value| { 
+  if $value =~ String  { -%>
+    <label key="<%= key %>"><%= $value %> </label>
+<%- } else { -%>
+    <label key="<%= key %>" hidden="<%= get($value, 'hidden', 'no') %>"><%= $value['value'] %></label>
+<% } } -%>
+  </labels>

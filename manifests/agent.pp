@@ -224,7 +224,16 @@ class wazuh::agent (
   $ossec_active_response_repeated_offenders   =  $wazuh::params_agent::active_response_repeated_offenders,
 
   # Agent Labels
-  $ossec_labels                      = $wazuh::params_agent::ossec_labels,
+  Hash[String,
+    Variant[
+      String,
+      Struct[{
+          hidden => Optional[Enum['yes', 'no']],
+          value => String
+        }
+      ]
+    ]
+  ] $ossec_labels = $wazuh::params_agent::ossec_labels,
 
   ## Selinux
   $selinux                           = $wazuh::params_agent::selinux,
@@ -464,13 +473,13 @@ class wazuh::agent (
     }
   }
 
-  if ($configure_labels == true) {
+  unless $ossec_labels.empty {
     concat::fragment {
       'ossec.conf_labels':
         target  => 'agent_ossec.conf',
         order   => 45,
         before  => Service[$agent_service_name],
-        content => template($ossec_labels_template);
+        content => epp($ossec_labels_template, { labels => $ossec_labels }),
     }
   }
 
