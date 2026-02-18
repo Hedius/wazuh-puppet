@@ -37,7 +37,6 @@ class wazuh::agent (
   $configure_syscheck                = $wazuh::params_agent::configure_syscheck,
   $configure_localfile               = $wazuh::params_agent::configure_localfile,
   $configure_active_response         = $wazuh::params_agent::configure_active_response,
-  $configure_labels                  = $wazuh::params_agent::configure_labels,
 
   # Templates paths
   $ossec_conf_template                  = $wazuh::params_agent::ossec_conf_template,
