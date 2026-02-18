@@ -4,8 +4,8 @@
   <labels>
 <%- $labels.each|$key, $value| { 
   if $value =~ String  { -%>
-    <label key="<%= key %>"><%= $value %> </label>
+    <label key="<%= $key %>"><%= $value %></label>
 <%- } else { -%>
-    <label key="<%= key %>" hidden="<%= get($value, 'hidden', 'no') %>"><%= $value['value'] %></label>
+    <label key="<%= $key %>" hidden="<%= get($value, 'hidden', 'no') %>"><%= $value['value'] %></label>
 <% } } -%>
   </labels>
