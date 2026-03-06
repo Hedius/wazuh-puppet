@@ -46,7 +46,7 @@ class wazuh::filebeat_oss (
   String $package = 'filebeat',
   String $service = 'filebeat',
   String $elastic_user = 'admin',
-  String $elastic_password = 'admin',
+  Optional[String] $elastic_password = undef,
   String $version = '7.10.2-1',
   String $wazuh_app_version = '4.14.2_7.10.2',
   String $wazuh_extensions_version = 'v4.14.2',
