@@ -1,6 +1,24 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [4.14.3]
+
+### Added
+
+- Add run_as variable. ([#1537](https://github.com/wazuh/wazuh-puppet/pull/1537))
+
+### Changed
+
+- None
+
+### Fixed
+
+- None
+
+### Deleted
+
+- None
+
 ## [4.14.2]
 
 ### Added
