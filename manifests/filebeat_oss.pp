@@ -41,21 +41,21 @@ class wazuh::filebeat_oss (
   String $indexer_ip = '127.0.0.1',
   Stdlib::Port $indexer_port = 9200,
   Array[String] $indexers = ["https://${$indexer_ip}:${indexer_port}"],
-
   Boolean $enable_archives = false,
   String $package = 'filebeat',
   String $service = 'filebeat',
   String $elastic_user = 'admin',
   Optional[String] $elastic_password = undef,
+
   String $version = '7.10.2-1',
-  String $wazuh_app_version = '4.14.3_7.10.2',
-  String $wazuh_extensions_version = 'v4.14.3',
+  String $wazuh_app_version = '4.14.4_7.10.2',
+  String $wazuh_extensions_version = 'v4.14.4',
   String $wazuh_filebeat_module = 'wazuh-filebeat-0.5.tar.gz',
+
   String $wazuh_node_name = $trusted['hostname'],
   String $filebeat_fileuser = 'root',
   String $filebeat_filegroup = 'root',
   String $filebeat_path_certs = '/etc/filebeat/certs',
-
   Stdlib::Absolutepath $cert_dir = '/etc/wazuh-certs',
   String $template_repo = 'https://raw.githubusercontent.com/wazuh/wazuh',
   String $module_repo = 'https://packages.wazuh.com/4.x/filebeat',
