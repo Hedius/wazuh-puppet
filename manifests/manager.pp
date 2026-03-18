@@ -374,6 +374,7 @@ class wazuh::manager (
       packages => $wazuh::params_manager::server_package,
       priority => 1001,
       version  => $server_version_install,
+      notify   => Class['apt::update'],
     }
   }
 

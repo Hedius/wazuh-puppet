@@ -57,6 +57,7 @@ class wazuh::dashboard (
       packages => $dashboard_package,
       priority => 1001,
       version  => $dashboard_version_install,
+      notify   => Class['apt::update'],
     }
   }
 

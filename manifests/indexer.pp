@@ -56,6 +56,7 @@ class wazuh::indexer (
       packages => $indexer_package,
       priority => 1001,
       version  => $indexer_version_install,
+      notify   => Class['apt::update'],
     }
   }
   package { 'wazuh-indexer':

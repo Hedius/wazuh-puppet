@@ -272,6 +272,7 @@ class wazuh::agent (
       packages => $agent_package_name,
       priority => 1001,
       version  => $agent_version,
+      notify   => Class['apt::update'],
     }
   }
   case $facts['kernel'] {
