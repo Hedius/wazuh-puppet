@@ -133,7 +133,7 @@ class wazuh::indexer (
     'plugins.security.authcz.admin_dn' => $admin_dn.map|$cn| { "CN=${cn},${ca_org}" },
     'plugins.security.check_snapshot_restore_write_privileges' => true,
     'plugins.security.enable_snapshot_restore_privilege' => true,
-    'plugins.security.nodes_dn' => $indexer_cluster_cn.each|$cn| { "CN=${cn},${ca_org}" },
+    'plugins.security.nodes_dn' => $indexer_cluster_cn.map|$cn| { "CN=${cn},${ca_org}" },
     'plugins.security.restapi.roles_enabled' => ['all_access', 'security_rest_api_access'],
     'plugins.security.allow_default_init_securityindex' => true,
     'cluster.routing.allocation.disk.threshold_enabled' => false,
