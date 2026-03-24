@@ -1,5 +1,7 @@
 # Copyright (C) 2015, Wazuh Inc.
 # Setup for Wazuh Indexer
+# @param config
+#   Config overrides
 class wazuh::indexer (
   # opensearch.yml configuration
   $indexer_network_host = '0.0.0.0',
@@ -29,7 +31,9 @@ class wazuh::indexer (
   Stdlib::Absolutepath $cert_dir = '/etc/wazuh-certs',
 
   # JVM options
-  Optional[String] $jvm_options_memory = undef
+  Optional[String] $jvm_options_memory = undef,
+
+  Hash $config = {}
 ) {
   if $jvm_options_memory {
     $_jvm_options_memory = $jvm_options_memory
@@ -102,9 +106,43 @@ class wazuh::indexer (
     }
   }
 
+  unless $indexer_discovery_hosts.empty {
+    $setting_seed_hosts = { 'discovery.seed_hosts' => $indexer_discovery_hosts }
+  } else {
+    $setting_seed_hosts = {}
+  }
+
+  $default_config = {
+    'network.host' => $indexer_network_host,
+    'node.name' => $indexer_node_name,
+    'cluster.initial_master_nodes' => $indexer_cluster_initial_master_nodes,
+    'cluster.name' => $indexer_cluster_name,
+    'discovery.seed_hosts' => $indexer_discovery_hosts,
+    'node.max_local_storage_nodes' => $indexer_node_max_local_storage_nodes,
+    'path.data' => $indexer_path_data,
+    'path.logs' => $indexer_path_logs,
+    'plugins.security.ssl.http.pemcert_filepath' => "${indexer_path_certs}/indexer.pem",
+    'plugins.security.ssl.http.pemkey_filepath' => "${indexer_path_certs}/indexer-key.pem",
+    'plugins.security.ssl.http.pemtrustedcas_filepath' => "${indexer_path_certs}/root-ca.pem",
+    'plugins.security.ssl.transport.pemcert_filepath' => "${indexer_path_certs}/indexer.pem",
+    'plugins.security.ssl.transport.pemkey_filepath' => "${indexer_path_certs}/indexer-key.pem",
+    'plugins.security.ssl.transport.pemtrustedcas_filepath' => "${indexer_path_certs}/root-ca.pem",
+    'plugins.security.ssl.http.enabled' => true,
+    'plugins.security.ssl.transport.enforce_hostname_verification' => false,
+    'plugins.security.ssl.transport.resolve_hostname' => false,
+    'plugins.security.authcz.admin_dn' => $admin_dn.map|$cn| { "CN=${cn},${ca_org}" },
+    'plugins.security.check_snapshot_restore_write_privileges' => true,
+    'plugins.security.enable_snapshot_restore_privilege' => true,
+    'plugins.security.nodes_dn' => $indexer_cluster_cn.each|$cn| { "CN=${cn},${ca_org}" },
+    'plugins.security.restapi.roles_enabled' => ['all_access', 'security_rest_api_access'],
+    'plugins.security.allow_default_init_securityindex' => true,
+    'cluster.routing.allocation.disk.threshold_enabled' => false,
+    'compatibility.override_main_response_version' => true,
+  } + $setting_seed_hosts
+
   file { 'configuration file':
     path    => '/etc/wazuh-indexer/opensearch.yml',
-    content => template('wazuh/wazuh_indexer_yml.erb'),
+    content => stdlib::to_yaml(deep_merge($default_config, $config)),
     group   => $indexer_filegroup,
     mode    => '0660',
     owner   => $indexer_fileuser,
