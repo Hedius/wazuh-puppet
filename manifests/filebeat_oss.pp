@@ -223,6 +223,7 @@ class wazuh::filebeat_oss (
     # lint:ignore:strict_indent
     content => @("EOF"),
       # Managed by puppet
+      [Service]
       User=
       User=${filebeat_fileuser}
       Group=
