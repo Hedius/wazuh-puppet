@@ -11,6 +11,7 @@ class wazuh::indexer (
   $indexer_service = 'wazuh-indexer',
   $indexer_package = 'wazuh-indexer',
   $indexer_version = '4.14.4',
+  $indexer_revision = 1,
   $indexer_fileuser = 'wazuh-indexer',
   $indexer_filegroup = 'wazuh-indexer',
 
@@ -47,7 +48,7 @@ class wazuh::indexer (
   case $facts['os']['family'] {
     'Debian': {
       # todo check this
-      $indexer_version_install = "${indexer_version}-*"
+      $indexer_version_pin = "${indexer_version}-${indexer_revision}"
     }
     'Linux', 'RedHat', default: {
       $indexer_version_install = $indexer_version

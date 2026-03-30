@@ -16,6 +16,8 @@ class wazuh::manager (
   # Installation
 
   $server_package_version           = $wazuh::params_manager::server_package_version,
+  $server_package_revision          = $wazuh::params_manager::server_package_revision,
+
   $manage_firewall                  = $wazuh::params_manager::manage_firewall,
 
   ### Ossec.conf blocks
@@ -360,7 +362,7 @@ class wazuh::manager (
   # assign version according to the package manager
   case $facts['os']['family'] {
     'Debian': {
-      $server_version_install = "${server_package_version}-*"
+      $server_version_install = "${server_package_version}-${server_package_revision}"
     }
     'Linux', 'RedHat', default: {
       $server_version_install = $server_package_version
