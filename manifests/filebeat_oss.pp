@@ -170,7 +170,7 @@ class wazuh::filebeat_oss (
       ensure  => 'directory',
       owner   => $filebeat_fileuser,
       group   => $filebeat_fileuser,
-      mode    => '0755',
+      # mode    => '0755',
       recurse => true,
       purge   => true,
       source  => $module_source,
