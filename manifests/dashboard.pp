@@ -10,6 +10,7 @@ class wazuh::dashboard (
   $dashboard_package = 'wazuh-dashboard',
   $dashboard_service = 'wazuh-dashboard',
   $dashboard_version = '4.14.4',
+  $dashboard_revision = 1,
   $indexer_server_ip = 'localhost',
   Stdlib::Port $indexer_server_port = 9200,
   $manager_api_host = '127.0.0.1',
@@ -45,7 +46,7 @@ class wazuh::dashboard (
   # assign version according to the package manager
   case $facts['os']['family'] {
     'Debian': {
-      $dashboard_version_install = "${dashboard_version}-*"
+      $dashboard_version_install = "${dashboard_version}-${dashboard_revision}"
     }
     'Linux', 'RedHat', default: {
       $dashboard_version_install = $dashboard_version
