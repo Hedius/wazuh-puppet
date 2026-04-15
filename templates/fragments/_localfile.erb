@@ -5,6 +5,9 @@
     <%- if localfile.key?('location') -%>
     <location><%= localfile['location'] %></location>
     <%- end -%>
+    <%- if localfile.key?('exclude') -%>
+    <exclude><%= localfile['exclude'] %></exclude>
+    <%- end -%>
     <%- if localfile.key?('frequency') -%>
     <frequency><%= localfile['frequency'] %></frequency>
     <%- end -%>
