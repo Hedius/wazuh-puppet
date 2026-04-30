@@ -1,6 +1,24 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [4.14.5]
+
+### Added
+
+- None
+
+### Changed
+
+- The versions of the actions used in the workflows are updated. ([#1581](https://github.com/wazuh/wazuh-puppet/pull/1581))
+
+### Fixed
+
+- Fix bumper script early exit ([#1574](https://github.com/wazuh/wazuh-puppet/pull/1574/))
+
+### Deleted
+
+- None
+
 ## [4.14.4]
 
 ### Added
