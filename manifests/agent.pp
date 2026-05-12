@@ -57,7 +57,8 @@ class wazuh::agent (
   # Server configuration
   $wazuh_register_endpoint           = $wazuh::params_agent::wazuh_register_endpoint,
   $wazuh_reporting_endpoint          = $wazuh::params_agent::wazuh_reporting_endpoint,
-  $ossec_port                        = $wazuh::params_agent::ossec_port,
+  Stdlib::Port $ossec_port           = $wazuh::params_agent::ossec_port,
+  Stdlib::Port $ossec_auth_port      = $wazuh::params_agent::ossec_auth_port,
   $ossec_protocol                    = $wazuh::params_agent::ossec_protocol,
   $wazuh_max_retries                 = $wazuh::params_agent::wazuh_max_retries,
   $wazuh_retry_interval              = $wazuh::params_agent::wazuh_retry_interval,
@@ -526,7 +527,7 @@ class wazuh::agent (
         }
 
         $agent_auth_executable = '/var/ossec/bin/agent-auth'
-        $agent_auth_base_command = "${agent_auth_executable} -m ${wazuh_register_endpoint}"
+        $agent_auth_base_command = "${agent_auth_executable} -m ${wazuh_register_endpoint} -p ${ossec_auth_port}"
 
         # https://documentation.wazuh.com/4.0/user-manual/registering/manager-verification/manager-verification-registration.html
         if $wazuh_manager_root_ca_pem != undef {
@@ -591,7 +592,7 @@ class wazuh::agent (
       }
       'windows': {
         $agent_auth_executable = "'C:\\Program Files (x86)\\ossec-agent\\agent-auth.exe'"
-        $agent_auth_base_command = "& ${agent_auth_executable} -m \"${wazuh_register_endpoint}\""
+        $agent_auth_base_command = "& ${agent_auth_executable} -m \"${wazuh_register_endpoint}\" -p ${ossec_auth_port}"
 
         # TODO: Implement the support for Manager verification using SSL
         # TODO: Implement the support for Agent verification using SSL

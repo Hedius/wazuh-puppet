@@ -58,7 +58,8 @@ class wazuh::params_agent {
   ## Server block configuration
   $wazuh_register_endpoint = undef
   $wazuh_reporting_endpoint = undef
-  $ossec_port = '1514'
+  $ossec_port = 1514
+  $ossec_auth_port = 1515
   $ossec_protocol = 'tcp'
   $wazuh_max_retries = '5'
   $wazuh_retry_interval = '5'
