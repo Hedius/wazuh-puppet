@@ -51,25 +51,10 @@ class wazuh::filebeat_oss (
   String $elastic_user = 'admin',
   Optional[String] $elastic_password = undef,
 
-<<<<<<< HEAD
   String $version = '7.10.2-1',
   String $wazuh_app_version = '4.14.6_7.10.2',
   String $wazuh_extensions_version = 'v4.14.6',
   String $wazuh_filebeat_module = 'wazuh-filebeat-0.5.tar.gz',
-=======
-  $filebeat_oss_archives = false,
-  $filebeat_oss_package = 'filebeat',
-  $filebeat_oss_service = 'filebeat',
-  $filebeat_oss_elastic_user = 'admin',
-  $filebeat_oss_elastic_password = 'admin',
-  $wazuh_app_version = '4.14.6_7.10.2',
-  $wazuh_extensions_version = 'v4.14.6',
-  $wazuh_filebeat_module = 'wazuh-filebeat-0.5.tar.gz',
-  $wazuh_node_name = 'master',
-  $filebeat_cert_source = "puppet:///modules/archive/manager-${wazuh_node_name}.pem",
-  $filebeat_certkey_source = "puppet:///modules/archive/manager-${wazuh_node_name}-key.pem",
-  $filebeat_node_rootca_source = 'puppet:///modules/archive/root-ca.pem',
->>>>>>> v4.14.6
 
   String $wazuh_node_name = $trusted['hostname'],
   String $filebeat_fileuser = 'root',
