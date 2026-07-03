@@ -5,7 +5,10 @@
 # @param cert_dir
 #   Local directory on server that stores certificates. (Used as a base for copying it to the dashboard server.)
 # @param config
-#   config overrides
+#   config overrides for wazuh dashboard.
+# @param plugin_config
+#   Config overrides for the plugin config in
+#    /usr/share/wazuh-dashboard/data/wazuh/config/wazuh.yml
 class wazuh::dashboard (
   $dashboard_package = 'wazuh-dashboard',
   $dashboard_service = 'wazuh-dashboard',
@@ -42,6 +45,7 @@ class wazuh::dashboard (
   Stdlib::Absolutepath $cert_dir = '/etc/wazuh-certs',
 
   Hash $config = {},
+  Hash $plugin_config = {}
 ) {
   # assign version according to the package manager
   case $facts['os']['family'] {
@@ -122,6 +126,21 @@ class wazuh::dashboard (
     'opensearch.password'                      => $dashboard_password,
   }
 
+  $default_plugin_config = {
+    # this is weird. Array of hashes.
+    'hosts' => $dashboard_wazuh_api_credentials.map|$api_profile| {
+      {
+        $api_profile['id'] => {
+          'url' => $api_profile['url'],
+          'port' => $api_profile['port'],
+          'username' => $api_profile['user'],
+          'password' => $api_profile['password'],
+          'run_as' => $api_profile['run_as'],
+        }
+      }
+    },
+  }
+
   $config_file = '/etc/wazuh-dashboard/opensearch_dashboards.yml'
   file { '/etc/wazuh-dashboard':
     ensure => directory,
@@ -147,7 +166,7 @@ class wazuh::dashboard (
     require => Package['wazuh-dashboard'],
   }
   -> file { '/usr/share/wazuh-dashboard/data/wazuh/config/wazuh.yml':
-    content   => template('wazuh/wazuh_yml.erb'),
+    content   => stdlib::to_yaml(deep_merge($default_plugin_config, $plugin_config)),
     group     => $dashboard_filegroup,
     mode      => '0600',
     owner     => $dashboard_fileuser,
