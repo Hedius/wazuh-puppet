@@ -1,6 +1,24 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [4.14.6]
+
+### Added
+
+- None
+
+### Changed
+
+- None
+
+### Fixed
+
+- None
+
+### Deleted
+
+- None
+
 ## [4.14.5]
 
 ### Added
@@ -206,6 +224,78 @@ All notable changes to this project will be documented in this file.
 - Add condition to execute apt update ([#1256](https://github.com/wazuh/wazuh-puppet/pull/1256))
 - Fix certificates.pp ([#1255](https://github.com/wazuh/wazuh-puppet/pull/1255))
 - Modify the version used into the Wazuh indexer and Wazuh manager deployment ([#1229](https://github.com/wazuh/wazuh-puppet/pull/1229))
+
+### Deleted
+
+- None
+
+## [4.10.5]
+
+### Added
+
+- None
+
+### Changed
+
+- None
+
+### Fixed
+
+- None
+
+### Deleted
+
+- None
+
+## [4.10.4]
+
+### Added
+
+- None
+
+### Changed
+
+- None
+
+### Fixed
+
+- Fix S3 URI ([#1418](https://github.com/wazuh/wazuh-puppet/pull/1418)) \- (Puppet Module Builder)
+
+### Deleted
+
+- None
+
+## [4.10.3]
+
+### Added
+
+- None
+
+### Changed
+
+- None
+
+### Fixed
+
+- None
+
+### Deleted
+
+- None
+
+## [4.10.2]
+
+### Added
+
+- None
+
+### Changed
+
+- None
+
+### Fixed
+
+- None
 
 ### Deleted
 
