@@ -2,6 +2,20 @@
 # Setup for Wazuh Indexer
 # @param config
 #   Config overrides
+# @param jvm_options_memory
+#   Explicit heap size for the indexer JVM (used for -Xms and -Xmx, e.g. '4096M').
+#   If unset, it is computed as 50% of RAM, capped at 32GB, minus 1GB when the
+#   dashboard and a further 4GB when the manager run on the same node.
+# @param with_dashboard
+#   Whether the Wazuh dashboard runs on this node, which reserves 1GB of RAM from
+#   the computed heap. If undef, detected via defined(Class['wazuh::dashboard']).
+#   Might not catch it.... so the param can manually trigger the logic.
+# @param with_manager
+#   Whether the Wazuh manager (server) runs on this node, which reserves 4GB of RAM
+#   from the computed heap. If undef, detected via defined(Class['wazuh::manager']),
+#   Might not catch it.... so the param can manually trigger the logic.
+# @param jvm_min_memory_mb
+#   Lower bound in MB for the computed heap size.
 class wazuh::indexer (
   # opensearch.yml configuration
   $indexer_network_host = '0.0.0.0',
@@ -33,14 +47,26 @@ class wazuh::indexer (
 
   # JVM options
   Optional[String] $jvm_options_memory = undef,
+  Optional[Boolean] $with_dashboard = undef,
+  Optional[Boolean] $with_manager = undef,
+  Integer $jvm_min_memory_mb = 2048,
 
   Hash $config = {}
 ) {
   if $jvm_options_memory {
     $_jvm_options_memory = $jvm_options_memory
   } else {
-    # cap at 32GB, else 50% of RAM
-    $mem = [32 * 1024, $facts['memory']['system']['total_bytes'] / 1024 / 1024 / 2].sort[0].floor
+    $_with_dashboard = pick($with_dashboard, defined(Class['wazuh::dashboard']))
+    $_with_manager = pick($with_manager, defined(Class['wazuh::manager']))
+
+    # reserve 1GB for the dashboard and 4GB for the manager when on the same node
+    $reserved_dashboard_mb = $_with_dashboard ? { true => 1024, default => 0 }
+    $reserved_manager_mb = $_with_manager ? { true => 4 * 1024, default => 0 }
+    $reserved_mb = $reserved_dashboard_mb + $reserved_manager_mb
+
+    # cap at 32GB, else 50% of RAM, minus reserved memory, but never below the minimum
+    $base_mb = [32 * 1024, $facts['memory']['system']['total_bytes'] / 1024 / 1024 / 2].sort[0].floor
+    $mem = [$base_mb - $reserved_mb, $jvm_min_memory_mb].sort[-1]
     $_jvm_options_memory = "${mem}M"
   }
 
