@@ -52,8 +52,8 @@ class wazuh::filebeat_oss (
   Optional[String] $elastic_password = undef,
 
   String $version = '7.10.2-1',
-  String $wazuh_app_version = '4.14.8_7.10.2',
-  String $wazuh_extensions_version = 'v4.14.8',
+  String $wazuh_app_version = '4.14.9_7.10.2',
+  String $wazuh_extensions_version = 'v4.14.9',
   String $wazuh_filebeat_module = 'wazuh-filebeat-0.5.tar.gz',
 
   String $wazuh_node_name = $trusted['hostname'],
